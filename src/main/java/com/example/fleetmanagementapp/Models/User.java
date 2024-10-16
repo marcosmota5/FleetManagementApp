@@ -1,0 +1,209 @@
+package com.example.fleetmanagementapp.Models;
+
+import com.example.fleetmanagementapp.Data.DbConnection;
+
+import java.sql.*;
+import java.util.Date;
+
+public class User {
+
+    // Fields
+    private int id;
+    private String firstName;
+    private String lastName;
+    private String sex;
+    private Date birthDate;
+    private String phoneNumber;
+    private String email;
+    private String login;
+    private Date createdOn;
+    private Profile profile;
+
+    // Getter and setter for id
+    public int getId() {
+        return id;
+    }
+
+    private void setId(int id) {
+        this.id = id;
+    }
+
+    // Getter and Setter for first name
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    // Getter and Setter for last name
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    // Getter and Setter for sex
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    // Getter and Setter for birthdate
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    // Getter and Setter for phone number
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    // Getter and Setter for email
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) { this.email = email; }
+
+    // Getter and Setter for login
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    // Getter and Setter for created on
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    // Getter and Setter for profile
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    // Get the full name
+    public String getFullName() { return firstName + " " + lastName; }
+
+    // Methods
+
+    // Get the current user data using its id
+    public static User getUserById(int id) {
+        try (Connection conn = DbConnection.connectToDatabase()) {
+            if (conn == null) {
+                System.out.println("Failed to connect to the database.");
+                return null;
+            }
+
+            // Create the select query by using question marks for the parameters
+            String query = "SELECT * FROM tb_users WHERE id = ?";
+
+            // Use PreparedStatement to prevent SQL injection and bind parameters
+            PreparedStatement pstmt = conn.prepareStatement(query);
+
+            // Set the parameters
+            pstmt.setInt(1, id);
+
+            // Execute the query
+            ResultSet rs = pstmt.executeQuery();
+
+            // If there are values, return the user
+            if (rs.next()) {
+                // Create a new instance of user
+                User user = new User();
+
+                // Set the values
+                user.setId(rs.getInt("id"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setSex(rs.getString("sex"));
+                user.setBirthDate(rs.getDate("birth_date"));
+                user.setPhoneNumber(rs.getString("phone_number"));
+                user.setEmail(rs.getString("email"));
+                user.setLogin(rs.getString("login"));
+                user.setCreatedOn(rs.getDate("created_on"));
+
+                // Get the profile
+                user.setProfile(Profile.getProfileById(rs.getInt("profile_id")));
+
+                // Return the user
+                return user;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Return null as the user was not found
+        return null;
+    }
+
+
+    // Execute the login and return a user instance
+    public static User executeLogin(String loginOrEmail, String password) {
+        try (Connection conn = DbConnection.connectToDatabase()) {
+            if (conn == null) {
+                System.out.println("Failed to connect to the database.");
+                return null;
+            }
+
+            // Create the select query by using question marks for the parameters
+            String query = "{ CALL sp_execute_login(?, ?, ?) }";
+
+            // Use PreparedStatement to prevent SQL injection and bind parameters
+            CallableStatement cstmt = conn.prepareCall(query);
+
+            // Bind parameters to the stored procedure
+            cstmt.setString(1, loginOrEmail);
+            cstmt.setString(2, password);
+
+            // Register the OUT parameter (user ID)
+            cstmt.registerOutParameter(3, java.sql.Types.INTEGER);
+
+            // Execute the query
+            ResultSet rs = cstmt.executeQuery();
+
+            // Retrieve the user ID from the OUT parameter
+            int userId = cstmt.getInt(3);
+
+            // Check if a valid user ID was returned
+            if (userId > 0) {
+                // Use the user ID to fetch the user details
+                return User.getUserById(userId);
+            } else {
+                System.out.println("Invalid login credentials.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Return null as the user was not found
+        return null;
+    }
+
+
+}
