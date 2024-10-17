@@ -1,7 +1,6 @@
 package com.example.fleetmanagementapp.Models;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class FuelLog {
 

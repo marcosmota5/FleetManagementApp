@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import net.synedra.validatorfx.TooltipWrapper;
 import net.synedra.validatorfx.Validator;
 
@@ -190,6 +191,13 @@ public class LoginController {
             } else {
                 AppPreferences.clearPreferences();
             }
+
+            // Get the stage from anchor
+            Stage stage = (Stage)anpLogin.getScene().getWindow();
+
+            // Resize the stage
+            stage.setWidth(1296);
+            stage.setHeight(807);
 
             // Switch the scene
             SceneSwitcher.switchScene(anpLogin, "home-view.fxml", user);

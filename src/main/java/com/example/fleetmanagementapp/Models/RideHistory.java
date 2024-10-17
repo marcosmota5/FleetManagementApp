@@ -1,7 +1,14 @@
 package com.example.fleetmanagementapp.Models;
 
+import com.example.fleetmanagementapp.Data.DbConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RideHistory {
 
@@ -15,7 +22,7 @@ public class RideHistory {
     private double fuelConsumed;
     private String comments;
     private Vehicle vehicle;
-    private LocalDate user;
+    private User user;
 
     // Getter and setter for id
     public int getId() {
@@ -99,13 +106,127 @@ public class RideHistory {
     }
 
     // Getter and Setter for user
-    public LocalDate getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(LocalDate user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
+
+    // Get ongoing rides by company id
+    public static List<RideHistory> getOngoingRidesByCompanyId(int companyId) throws Exception {
+
+        // Create the profiles list
+        List<RideHistory> rides = new ArrayList<>();
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // SQL query to get the data
+        String query = "SELECT rihi.* FROM tb_ride_history AS rihi " +
+                "INNER JOIN tb_vehicles AS vehi ON vehi.id = rihi.vehicle_id " +
+                "WHERE vehi.company_id = ? AND rihi.end_date IS NULL";
+
+        // Create a PreparedStatement
+        PreparedStatement pstmt = conn.prepareStatement(query);
+
+        // Set the parameters
+        pstmt.setInt(1, companyId);
+
+        // Execute the query
+        ResultSet rs = pstmt.executeQuery();
+
+        // Iterate through the result set and create profile objects
+        while (rs.next()) {
+            // Create a new instance of profile
+            RideHistory ride = new RideHistory();
+
+            // Set the values
+            ride.setId(rs.getInt("id"));
+            ride.setStartLocation(rs.getString("start_location"));
+            ride.setEndLocation(rs.getString("end_location"));
+            ride.setStartDate(rs.getDate("start_date").toLocalDate());
+            ride.setEndDate(rs.getDate("end_date").toLocalDate());
+            ride.setKilometersDriven(rs.getDouble("kilometers_driven"));
+            ride.setFuelConsumed(rs.getDouble("fuel_consumed"));
+            ride.setComments(rs.getString("comments"));
+
+            // Get the vehicle
+            ride.setVehicle(Vehicle.getVehicleById(rs.getInt("vehicle_id")));
+
+            // Get the user
+            ride.setUser(User.getUserById(rs.getInt("user_id")));
+
+            // Add the user to the list
+            rides.add(ride);
+        }
+
+        // Return the list of users
+        return rides;
+    }
+
+    // Get ongoing rides by company id
+    public static List<RideHistory> getCompletedRidesById(int companyId) throws Exception {
+
+        // Create the profiles list
+        List<RideHistory> rides = new ArrayList<>();
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // SQL query to get the data
+        String query = "SELECT rihi.* FROM tb_ride_history AS rihi " +
+                "INNER JOIN tb_vehicles AS vehi ON vehi.id = rihi.vehicle_id " +
+                "WHERE vehi.company_id = ? AND rihi.end_date IS NOT NULL";
+
+        // Create a PreparedStatement
+        PreparedStatement pstmt = conn.prepareStatement(query);
+
+        // Set the parameters
+        pstmt.setInt(1, companyId);
+
+        // Execute the query
+        ResultSet rs = pstmt.executeQuery();
+
+        // Iterate through the result set and create profile objects
+        while (rs.next()) {
+            // Create a new instance of profile
+            RideHistory ride = new RideHistory();
+
+            // Set the values
+            ride.setId(rs.getInt("id"));
+            ride.setStartLocation(rs.getString("start_location"));
+            ride.setEndLocation(rs.getString("end_location"));
+            ride.setStartDate(rs.getDate("start_date").toLocalDate());
+            ride.setEndDate(rs.getDate("end_date").toLocalDate());
+            ride.setKilometersDriven(rs.getDouble("kilometers_driven"));
+            ride.setFuelConsumed(rs.getDouble("fuel_consumed"));
+            ride.setComments(rs.getString("comments"));
+
+            // Get the vehicle
+            ride.setVehicle(Vehicle.getVehicleById(rs.getInt("vehicle_id")));
+
+            // Get the user
+            ride.setUser(User.getUserById(rs.getInt("user_id")));
+
+            // Add the user to the list
+            rides.add(ride);
+        }
+
+        // Return the list of users
+        return rides;
+    }
 
 }

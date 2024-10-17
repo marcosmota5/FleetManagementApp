@@ -29,7 +29,7 @@ public class SceneSwitcher {
 
         // Pass the user instance if it's HomeController
         if (controller instanceof HomeController) {
-            //((HomeController)controller).setUser(user); // Pass the user to HomeController
+            ((HomeController)controller).setCurrentUser(user); // Pass the user to HomeController
         }
 
         // Replace the current AnchorPane's children with the new one

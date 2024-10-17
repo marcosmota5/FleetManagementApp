@@ -1,5 +1,11 @@
 package com.example.fleetmanagementapp.Models;
 
+import com.example.fleetmanagementapp.Data.DbConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -124,6 +130,59 @@ public class Vehicle {
     }
 
     private void setCompany(Company company) { this.company = company; }
+
+    // Get the profile data using its id
+    public static Vehicle getVehicleById(int id) throws Exception {
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // Create the select query by using question marks for the parameters
+        String query = "SELECT * FROM tb_vehicles WHERE id = ?";
+
+        // Use PreparedStatement to prevent SQL injection and bind parameters
+        PreparedStatement pstmt = conn.prepareStatement(query);
+
+        // Set the parameters
+        pstmt.setInt(1, id);
+
+        // Execute the query
+        ResultSet rs = pstmt.executeQuery();
+
+        // If there are values, return the profile
+        if (rs.next()) {
+            // Create a new instance of profile
+            Vehicle vehicle = new Vehicle();
+
+            // Set the values
+            vehicle.setId(rs.getInt("id"));
+            vehicle.setLicensePlate(rs.getString("license_plate"));
+            vehicle.setType(rs.getString("type"));
+            vehicle.setBrand(rs.getString("brand"));
+            vehicle.setModel(rs.getString("model"));
+            vehicle.setYear(rs.getInt("year"));
+            vehicle.setFuelType(rs.getString("fuel_type"));
+            vehicle.setMileage(rs.getDouble("mileage"));
+            vehicle.setFuelLevel(rs.getDouble("fuel_level"));
+            vehicle.setStatus(rs.getString("status"));
+            vehicle.setCreatedOn(rs.getDate("created_on").toLocalDate());
+
+            // Get the company
+            vehicle.setCompany(Company.getCompanyById(rs.getInt("company_id")));
+
+            // Return the user
+            return vehicle;
+        }
+
+        // Return null as the profile was not found
+        return null;
+    }
+
 
     @Override
     public String toString() {

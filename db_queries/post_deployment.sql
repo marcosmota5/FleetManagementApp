@@ -117,7 +117,22 @@ VALUES
 (10, 2, 'Sault Ste. Marie', 'Thunder Bay', '2024-09-15 05:30:00', '2024-09-15 11:30:00', 400.00, 18.5, 'Long-distance delivery.'),
 (2, 1, 'Toronto', 'Ottawa', '2024-10-14 07:00:00', '2024-10-14 12:30:00', 450.00, 20.0, 'Comfortable ride with Tesla.');
 
--- Inser tsome dummy fuel log
+-- Ongoing rides with NULL end_location and end_date
+INSERT INTO tb_ride_history 
+(vehicle_id, user_id, start_location, start_date)
+VALUES
+(1, 1, 'Toronto', '2024-10-15 08:00:00'),
+(2, 2, 'Mississauga', '2024-10-15 09:00:00'),
+(3, 1, 'Ottawa', '2024-10-14 15:00:00'),
+(4, 2, 'Waterloo', '2024-10-15 10:00:00'),
+(5, 1, 'Hamilton', '2024-10-14 14:00:00'),
+(6, 1, 'Toronto', '2024-10-15 07:30:00'),
+(7, 2, 'Kingston', '2024-10-15 11:00:00'),
+(8, 1, 'Guelph', '2024-10-14 12:00:00'),
+(9, 2, 'Niagara Falls', '2024-10-15 06:00:00'),
+(10, 1, 'Thunder Bay', '2024-10-15 09:30:00');
+
+-- Insert some dummy fuel log
 INSERT INTO tb_fuel_log 
 (vehicle_id, user_id, fuel_date, liters_filled, fuel_price_per_liter, total_cost, comments)
 VALUES
