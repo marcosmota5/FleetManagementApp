@@ -59,7 +59,7 @@
             </Menu>
           <Menu fx:id="mniHelp" mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem fx:id="mniAbout" mnemonicParsing="false" text="About" />
+              <MenuItem fx:id="mniAbout" mnemonicParsing="false" onAction="#about" text="About" />
             </items>
           </Menu>
         </menus>
@@ -77,18 +77,18 @@
          <children>
             <BarChart fx:id="bctFuelEfficiencyByVehicle" title="Fuel Efficiency by Vehicle">
               <xAxis>
-                <CategoryAxis side="BOTTOM" />
+                <CategoryAxis fx:id="caxFuelEfficiencyCategory" side="BOTTOM" />
               </xAxis>
               <yAxis>
-                <NumberAxis side="LEFT" />
+                <NumberAxis fx:id="naxFuelEfficiencyNumber" side="LEFT" />
               </yAxis>
             </BarChart>
             <LineChart fx:id="lctFuelExpensesOverTime" title="Fuel Expenses Over Time" GridPane.rowIndex="1">
               <xAxis>
-                <CategoryAxis side="BOTTOM" />
+                <CategoryAxis fx:id="caxFuelExpensesCategory" side="BOTTOM" />
               </xAxis>
               <yAxis>
-                <NumberAxis side="LEFT" />
+                <NumberAxis fx:id="naxFuelExpensesNumber" side="LEFT" />
               </yAxis>
             </LineChart>
             <VBox fx:id="vbxOngoingRides" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
@@ -100,12 +100,12 @@
                   </Label>
                   <TableView fx:id="tvwOngoingRides" prefHeight="678.0" prefWidth="640.0">
                     <columns>
-                      <TableColumn prefWidth="111.0" text="Start date" />
-                      <TableColumn prefWidth="106.0" text="Start location" />
-                        <TableColumn prefWidth="115.0" text="Brand" />
-                        <TableColumn prefWidth="105.0" text="Model" />
-                        <TableColumn minWidth="2.0" prefWidth="106.0" text="License plate" />
-                        <TableColumn minWidth="9.0" prefWidth="96.0" text="User" />
+                      <TableColumn fx:id="tbcStartDate" prefWidth="111.0" text="Start date" />
+                      <TableColumn fx:id="tbcStartLocation" prefWidth="106.0" text="Start location" />
+                        <TableColumn fx:id="tbcBrand" prefWidth="115.0" text="Brand" />
+                        <TableColumn fx:id="tbcModel" prefWidth="105.0" text="Model" />
+                        <TableColumn fx:id="tbcLicensePlate" minWidth="2.0" prefWidth="106.0" text="License plate" />
+                        <TableColumn fx:id="tbcUser" minWidth="9.0" prefWidth="96.0" text="User" />
                     </columns>
                   </TableView>
                </children>
@@ -120,7 +120,7 @@
          </items>
       </ToolBar>
       <Label fx:id="lblCurrentCompany" layoutX="1021.0" layoutY="5.0" prefHeight="17.0" prefWidth="102.0" text="Current company:" />
-      <Button fx:id="btnLogout" layoutX="1197.0" layoutY="739.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="82.0" text="Logout">
+      <Button fx:id="btnLogout" layoutX="1197.0" layoutY="739.0" mnemonicParsing="false" onAction="#logout" prefHeight="26.0" prefWidth="82.0" text="Logout">
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>

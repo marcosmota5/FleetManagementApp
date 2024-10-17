@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anpLogin" prefHeight="581.0" prefWidth="853.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.LoginController">
+<AnchorPane fx:id="anpLogin" prefHeight="581.0" prefWidth="853.0"  xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.LoginController">
    <children>
       <SplitPane dividerPositions="0.37602820211515864" prefHeight="581.0" prefWidth="853.0">
         <items>

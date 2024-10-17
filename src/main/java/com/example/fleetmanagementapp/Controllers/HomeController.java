@@ -1,23 +1,30 @@
 package com.example.fleetmanagementapp.Controllers;
 
+import com.example.fleetmanagementapp.Helpers.ChartHelper;
+import com.example.fleetmanagementapp.Helpers.SceneSwitcher;
+import com.example.fleetmanagementapp.Helpers.TableHelper;
 import com.example.fleetmanagementapp.Models.*;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class HomeController {
 
@@ -27,6 +34,21 @@ public class HomeController {
 
     @FXML
     private BarChart<String, Number> bctFuelEfficiencyByVehicle;
+
+    @FXML
+    private LineChart<String, Number> lctFuelExpensesOverTime;
+
+    @FXML
+    private CategoryAxis caxFuelEfficiencyCategory;
+
+    @FXML
+    private CategoryAxis caxFuelExpensesCategory;
+
+    @FXML
+    private NumberAxis naxFuelEfficiencyNumber;
+
+    @FXML
+    private NumberAxis naxFuelExpensesNumber;
 
     @FXML
     private Button btnLogout;
@@ -48,9 +70,6 @@ public class HomeController {
 
     @FXML
     private Label lblUsername;
-
-    @FXML
-    private LineChart<String, Number> lctFuelExpensesOverTime;
 
     @FXML
     private MenuBar mbrMenu;
@@ -116,6 +135,24 @@ public class HomeController {
     private TableView<RideHistory> tvwOngoingRides;
 
     @FXML
+    private TableColumn<RideHistory, String> tbcBrand;
+
+    @FXML
+    private TableColumn<RideHistory, String> tbcLicensePlate;
+
+    @FXML
+    private TableColumn<RideHistory, String> tbcModel;
+
+    @FXML
+    private TableColumn<RideHistory, LocalDate> tbcStartDate;
+
+    @FXML
+    private TableColumn<RideHistory, String> tbcStartLocation;
+
+    @FXML
+    private TableColumn<RideHistory, String> tbcUser;
+
+    @FXML
     private VBox vbxOngoingRides;
 
     private User currentUser;
@@ -151,15 +188,21 @@ public class HomeController {
 
         // Get the list of users from the database
         try {
+
+            // Get the lists from the database
             rideHistoryList = FXCollections.observableArrayList(RideHistory.getCompletedRidesById(companyId));
             ongoingRideList = FXCollections.observableArrayList(RideHistory.getOngoingRidesByCompanyId(companyId));
             fuelLogList = FXCollections.observableArrayList(FuelLog.getAllFuelLogByCompanyId(companyId));
 
-            fillFuelEfficiencyChart();
+            // Call the helper method to fill charts
+            ChartHelper.fillFuelEfficiencyChart(rideHistoryList, bctFuelEfficiencyByVehicle, caxFuelEfficiencyCategory);
+            ChartHelper.fillFuelExpensesChart(fuelLogList, lctFuelExpensesOverTime, caxFuelExpensesCategory);
 
-            fillFuelExpensesChart();
+            // Call the helper method to fill the table
+            TableHelper.fillOngoingRidesTable(ongoingRideList, tvwOngoingRides, tbcStartDate, tbcStartLocation,
+                    tbcBrand, tbcModel, tbcLicensePlate, tbcUser);
         } catch (Exception e) {
-
+            System.out.println(e.getMessage());
         }
     }
 
@@ -173,51 +216,47 @@ public class HomeController {
         lblProfile.setText(user.getProfile().toString());
     }
 
-    public void fillFuelEfficiencyChart() {
-        // Series for the bar chart
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Fuel Efficiency (Km/L)");
+    public void logout(ActionEvent event) throws IOException {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Logout Confirmation");
+        alert.setHeaderText("Are you sure you want to log out?");
+        alert.setContentText("Click 'Yes' to log out or 'No' to cancel.");
 
-        // Calculate fuel efficiency for each vehicle in ride history
-        for (RideHistory ride : rideHistoryList) {
-            if (ride.getFuelConsumed() > 0 && ride.getKilometersDriven() > 0) {
-                double fuelEfficiency = ride.getKilometersDriven() / ride.getFuelConsumed();
-                String vehicleName = ride.getVehicle().toString();
+        // Show the dialog and wait for user response
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // User clicked on ok, so switch the scene
+                try {
 
-                // Add data to the bar chart
-                series.getData().add(new XYChart.Data<>(vehicleName, fuelEfficiency));
+                    // The code below has a problem because the window getting smaller is cutting the login anchor pane
+                    // Get the stage from anchor
+                    //Stage stage = (Stage)anpHome.getScene().getWindow();
+
+                    // Resize the stage
+                    //stage.setWidth(853);
+                    //stage.setHeight(531);
+
+
+                    // Go to the login page
+                    SceneSwitcher.switchScene(anpHome, "login-view.fxml");
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
             }
-        }
+        });
 
-        // Add series to the bar chart
-        bctFuelEfficiencyByVehicle.getData().clear();
-        bctFuelEfficiencyByVehicle.getData().add(series);
     }
 
-    public void fillFuelExpensesChart() {
-        // Series for the line chart
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Fuel Expenses Over Time");
 
-        // Create a map to accumulate fuel expenses by month
-        Map<String, Double> expensesByMonth = new HashMap<>();
+    public void about(ActionEvent event) {
+        // Create the alert
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Fleet Management App");
+        alert.setContentText("Developed by Marcos Mota <marcosmota5@hotmail.com>");
 
-        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM yyyy");
+        // Show the alert and wait for user to click "OK"
+        alert.showAndWait();
 
-        for (FuelLog log : fuelLogList) {
-            String month = log.getFuelDate().format(monthFormatter); // Format date as 'Jan 2024'
-            double cost = log.getTotalCost();
-
-            expensesByMonth.put(month, expensesByMonth.getOrDefault(month, 0.0) + cost);
-        }
-
-        // Add data to the line chart
-        for (Map.Entry<String, Double> entry : expensesByMonth.entrySet()) {
-            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-        }
-
-        // Add series to the line chart
-        lctFuelExpensesOverTime.getData().clear();
-        lctFuelExpensesOverTime.getData().add(series);
     }
 }

@@ -18,8 +18,8 @@ public class RideHistory {
     private String endLocation;
     private LocalDate startDate;
     private LocalDate endDate;
-    private double kilometersDriven;
-    private double fuelConsumed;
+    private Double kilometersDriven;
+    private Double fuelConsumed;
     private String comments;
     private Vehicle vehicle;
     private User user;
@@ -74,7 +74,7 @@ public class RideHistory {
         return kilometersDriven;
     }
 
-    public void setKilometersDriven(double kilometersDriven) {
+    public void setKilometersDriven(Double kilometersDriven) {
         this.kilometersDriven = kilometersDriven;
     }
 
@@ -83,7 +83,7 @@ public class RideHistory {
         return fuelConsumed;
     }
 
-    public void setFuelConsumed(double fuelConsumed) {
+    public void setFuelConsumed(Double fuelConsumed) {
         this.fuelConsumed = fuelConsumed;
     }
 
@@ -120,9 +120,9 @@ public class RideHistory {
         setStartLocation(rs.getString("ride_history_start_location"));
         setEndLocation(rs.getString("ride_history_end_location"));
         setStartDate(rs.getDate("ride_history_start_date").toLocalDate());
-        setEndDate(rs.getDate("ride_history_end_date").toLocalDate());
-        setKilometersDriven(rs.getDouble("ride_history_kilometers_driven"));
-        setFuelConsumed(rs.getDouble("ride_history_fuel_consumed"));
+        setEndDate(rs.getDate("ride_history_end_date") == null ? null : rs.getDate("ride_history_end_date").toLocalDate());
+        setKilometersDriven(rs.getObject("ride_history_kilometers_driven") == null ? null : rs.getDouble("ride_history_kilometers_driven"));
+        setFuelConsumed(rs.getObject("ride_history_fuel_consumed") == null ? null : rs.getDouble("ride_history_fuel_consumed"));
         setComments(rs.getString("ride_history_comments"));
 
         // Create a new instance of vehicle
