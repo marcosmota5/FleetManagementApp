@@ -3,6 +3,7 @@ package com.example.fleetmanagementapp.Models;
 import com.example.fleetmanagementapp.Data.DbConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class User {
@@ -12,11 +13,11 @@ public class User {
     private String firstName;
     private String lastName;
     private String sex;
-    private Date birthDate;
+    private LocalDate birthDate;
     private String phoneNumber;
     private String email;
     private String login;
-    private Date createdOn;
+    private LocalDate createdOn;
     private Profile profile;
 
     // Getter and setter for id
@@ -56,11 +57,11 @@ public class User {
     }
 
     // Getter and Setter for birthdate
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -90,11 +91,11 @@ public class User {
     }
 
     // Getter and Setter for created on
-    public Date getCreatedOn() {
+    public LocalDate getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(Date createdOn) {
+    public void setCreatedOn(LocalDate createdOn) {
         this.createdOn = createdOn;
     }
 
@@ -113,97 +114,139 @@ public class User {
     // Methods
 
     // Get the current user data using its id
-    public static User getUserById(int id) {
-        try (Connection conn = DbConnection.connectToDatabase()) {
-            if (conn == null) {
-                System.out.println("Failed to connect to the database.");
-                return null;
-            }
+    public static User getUserById(int id) throws Exception {
 
-            // Create the select query by using question marks for the parameters
-            String query = "SELECT * FROM tb_users WHERE id = ?";
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
 
-            // Use PreparedStatement to prevent SQL injection and bind parameters
-            PreparedStatement pstmt = conn.prepareStatement(query);
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
 
-            // Set the parameters
-            pstmt.setInt(1, id);
+        // Create the select query by using question marks for the parameters
+        String query = "SELECT * FROM tb_users WHERE id = ?";
 
-            // Execute the query
-            ResultSet rs = pstmt.executeQuery();
+        // Use PreparedStatement to prevent SQL injection and bind parameters
+        PreparedStatement pstmt = conn.prepareStatement(query);
 
-            // If there are values, return the user
-            if (rs.next()) {
-                // Create a new instance of user
-                User user = new User();
+        // Set the parameters
+        pstmt.setInt(1, id);
 
-                // Set the values
-                user.setId(rs.getInt("id"));
-                user.setFirstName(rs.getString("first_name"));
-                user.setLastName(rs.getString("last_name"));
-                user.setSex(rs.getString("sex"));
-                user.setBirthDate(rs.getDate("birth_date"));
-                user.setPhoneNumber(rs.getString("phone_number"));
-                user.setEmail(rs.getString("email"));
-                user.setLogin(rs.getString("login"));
-                user.setCreatedOn(rs.getDate("created_on"));
+        // Execute the query
+        ResultSet rs = pstmt.executeQuery();
 
-                // Get the profile
-                user.setProfile(Profile.getProfileById(rs.getInt("profile_id")));
+        // If there are values, return the user
+        if (rs.next()) {
+            // Create a new instance of user
+            User user = new User();
 
-                // Return the user
-                return user;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            // Set the values
+            user.setId(rs.getInt("id"));
+            user.setFirstName(rs.getString("first_name"));
+            user.setLastName(rs.getString("last_name"));
+            user.setSex(rs.getString("sex"));
+            user.setBirthDate(rs.getDate("birth_date").toLocalDate());
+            user.setPhoneNumber(rs.getString("phone_number"));
+            user.setEmail(rs.getString("email"));
+            user.setLogin(rs.getString("login"));
+            user.setCreatedOn(rs.getDate("created_on").toLocalDate());
+
+            // Get the profile
+            user.setProfile(Profile.getProfileById(rs.getInt("profile_id")));
+
+            // Return the user
+            return user;
         }
 
         // Return null as the user was not found
         return null;
     }
-
 
     // Execute the login and return a user instance
-    public static User executeLogin(String loginOrEmail, String password) {
-        try (Connection conn = DbConnection.connectToDatabase()) {
-            if (conn == null) {
-                System.out.println("Failed to connect to the database.");
-                return null;
-            }
+    public static User executeLogin(String loginOrEmail, String password) throws Exception {
 
-            // Create the select query by using question marks for the parameters
-            String query = "{ CALL sp_execute_login(?, ?, ?) }";
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
 
-            // Use PreparedStatement to prevent SQL injection and bind parameters
-            CallableStatement cstmt = conn.prepareCall(query);
-
-            // Bind parameters to the stored procedure
-            cstmt.setString(1, loginOrEmail);
-            cstmt.setString(2, password);
-
-            // Register the OUT parameter (user ID)
-            cstmt.registerOutParameter(3, java.sql.Types.INTEGER);
-
-            // Execute the query
-            ResultSet rs = cstmt.executeQuery();
-
-            // Retrieve the user ID from the OUT parameter
-            int userId = cstmt.getInt(3);
-
-            // Check if a valid user ID was returned
-            if (userId > 0) {
-                // Use the user ID to fetch the user details
-                return User.getUserById(userId);
-            } else {
-                System.out.println("Invalid login credentials.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
         }
 
-        // Return null as the user was not found
-        return null;
+        // Create the select query by using question marks for the parameters
+        String query = "{ CALL sp_execute_login(?, ?, ?) }";
+
+        // Use PreparedStatement to prevent SQL injection and bind parameters
+        CallableStatement cstmt = conn.prepareCall(query);
+
+        // Bind parameters to the stored procedure
+        cstmt.setString(1, loginOrEmail);
+        cstmt.setString(2, password);
+
+        // Register the OUT parameter (user ID)
+        cstmt.registerOutParameter(3, java.sql.Types.INTEGER);
+
+        // Execute the query
+        ResultSet rs = cstmt.executeQuery();
+
+        // Retrieve the user ID from the OUT parameter
+        int userId = cstmt.getInt(3);
+
+        // Check if a valid user ID was returned
+        if (userId > 0) {
+            // Use the user ID to fetch the user details
+            return User.getUserById(userId);
+        } else {
+            throw new SQLException("Invalid login credentials.");
+        }
     }
 
+    // Execute the login and return a user instance
+    public static int registerUser(String firstName, String lastName, String sex, LocalDate birthDate, String phoneNumber,
+                                   String email, String login, String password, int profileId) throws Exception {
 
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // Create the select query by using question marks for the parameters
+        String query = "{ CALL sp_insert_user(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+
+        // Use PreparedStatement to prevent SQL injection and bind parameters
+        CallableStatement cstmt = conn.prepareCall(query);
+
+        // Convert LocalDate to java.sql.Date
+        java.sql.Date sqlBirthDate = java.sql.Date.valueOf(birthDate);
+
+        // Bind parameters to the stored procedure
+        cstmt.setString(1, firstName);
+        cstmt.setString(2, lastName);
+        cstmt.setString(3, sex);
+        cstmt.setDate(4, sqlBirthDate);
+        cstmt.setString(5, phoneNumber);
+        cstmt.setString(6, email);
+        cstmt.setString(7, login);
+        cstmt.setString(8, password);
+        cstmt.setInt(9, profileId);
+
+        // Register the OUT parameter (user ID)
+        cstmt.registerOutParameter(10, java.sql.Types.INTEGER);
+
+        // Execute the query
+        ResultSet rs = cstmt.executeQuery();
+
+        // Retrieve and return the user ID from the OUT parameter
+        return cstmt.getInt(10);
+    }
+
+    @Override
+    public String toString() {
+        // Display the user information in the ListView (for example, firstName and lastName)
+        return firstName + " " + lastName + " (" + login + ")";
+    }
 }

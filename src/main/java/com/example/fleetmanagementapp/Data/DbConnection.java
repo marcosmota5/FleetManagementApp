@@ -15,6 +15,7 @@ public class DbConnection {
         try {
             return DriverManager.getConnection(CONNECTION_STRING, USER, PASSWORD);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }

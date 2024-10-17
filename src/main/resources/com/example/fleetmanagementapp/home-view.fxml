@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane fx:id="anpHome" prefHeight="546.0" prefWidth="802.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.HomeController">
+   <children>
+      <MenuBar layoutY="2.0" prefHeight="26.0" prefWidth="802.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Users">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Add new user" />
+                  <MenuItem mnemonicParsing="false" text="View users" />
+                  <Menu mnemonicParsing="false" text="Profiles">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Add new profile" />
+                        <MenuItem mnemonicParsing="false" text="View profiles" />
+                    </items>
+                  </Menu>
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Vehicles">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Add new vehicle" />
+                  <MenuItem mnemonicParsing="false" text="View vehicles" />
+               </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Rides">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Register new ride" />
+                  <MenuItem mnemonicParsing="false" text="View rides" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Fuel">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Register new fuel occurrence" />
+                  <MenuItem mnemonicParsing="false" text="View fuel log" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <ComboBox layoutX="651.0" layoutY="1.0" prefWidth="150.0" />
+      <GridPane layoutY="28.0" prefHeight="489.0" prefWidth="802.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <BarChart title="Fuel Efficiency by Vehicle">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+            </BarChart>
+            <LineChart title="Fuel Expenses Over Time" GridPane.rowIndex="1">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+            </LineChart>
+            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
+               <children>
+                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="409.0" text="Current rides">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TableView prefHeight="467.0" prefWidth="401.0">
+                    <columns>
+                      <TableColumn prefWidth="75.0" text="C1" />
+                      <TableColumn prefWidth="75.0" text="C2" />
+                    </columns>
+                  </TableView>
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+      <ToolBar layoutY="521.0" prefHeight="25.0" prefWidth="802.0">
+         <items>
+            <Label text="Username (Login)" />
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="2.0" />
+            <Label text="Profile" />
+         </items>
+      </ToolBar>
+      <Label layoutX="547.0" layoutY="5.0" prefHeight="17.0" prefWidth="102.0" text="Current company:" />
+      <Button fx:id="btnLogin" layoutX="719.0" layoutY="519.0" mnemonicParsing="false" onAction="#executeLogin" prefHeight="27.0" prefWidth="82.0" text="Logout">
+         <graphic>
+            <ImageView fx:id="btnLogout" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../logout.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+</AnchorPane>
