@@ -49,6 +49,15 @@ public class Profile {
         this.createdOn = createdOn;
     }
 
+    // Set the values of the current instance using a received result set
+    public void setValuesByResultSet(ResultSet rs) throws SQLException {
+        setId(rs.getInt("profile_id"));
+        setName(rs.getString("profile_name"));
+        setDescription(rs.getString("profile_description"));
+        setPriority(rs.getInt("profile_priority"));
+        setCreatedOn(rs.getDate("profile_created_on").toLocalDate());
+    }
+
     // Get the profile data using its id
     public static Profile getProfileById(int id) throws Exception {
 
@@ -61,7 +70,7 @@ public class Profile {
         }
 
         // Create the select query by using question marks for the parameters
-        String query = "SELECT * FROM tb_profiles WHERE id = ?";
+        String query = "SELECT * FROM vw_profiles WHERE profile_id = ?";
 
         // Use PreparedStatement to prevent SQL injection and bind parameters
         PreparedStatement pstmt = conn.prepareStatement(query);
@@ -77,12 +86,8 @@ public class Profile {
             // Create a new instance of profile
             Profile profile = new Profile();
 
-            // Set the values
-            profile.setId(rs.getInt("id"));
-            profile.setName(rs.getString("name"));
-            profile.setDescription(rs.getString("description"));
-            profile.setPriority(rs.getInt("priority"));
-            profile.setCreatedOn(rs.getDate("created_on").toLocalDate());
+            // Call the method that set the values
+            profile.setValuesByResultSet(rs);
 
             // Return the user
             return profile;
@@ -107,7 +112,7 @@ public class Profile {
         }
 
         // SQL query to get all users
-        String query = "SELECT * FROM tb_profiles WHERE id > 0";
+        String query = "SELECT * FROM vw_profiles WHERE profile_id > 0";
 
         // Create a PreparedStatement
         PreparedStatement pstmt = conn.prepareStatement(query);
@@ -120,12 +125,8 @@ public class Profile {
             // Create a new instance of profile
             Profile profile = new Profile();
 
-            // Set the values
-            profile.setId(rs.getInt("id"));
-            profile.setName(rs.getString("name"));
-            profile.setDescription(rs.getString("description"));
-            profile.setPriority(rs.getInt("priority"));
-            profile.setCreatedOn(rs.getDate("created_on").toLocalDate());
+            // Call the method that set the values
+            profile.setValuesByResultSet(rs);
 
             // Add the user to the list
             profiles.add(profile);

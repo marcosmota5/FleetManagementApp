@@ -120,6 +120,7 @@ public class HomeController {
 
     private User currentUser;
     private ObservableList<Company> companyList;
+    private ObservableList<RideHistory> ongoingRideList;
     private ObservableList<RideHistory> rideHistoryList;
     private ObservableList<FuelLog> fuelLogList;
 
@@ -151,12 +152,14 @@ public class HomeController {
         // Get the list of users from the database
         try {
             rideHistoryList = FXCollections.observableArrayList(RideHistory.getCompletedRidesById(companyId));
+            ongoingRideList = FXCollections.observableArrayList(RideHistory.getOngoingRidesByCompanyId(companyId));
+            fuelLogList = FXCollections.observableArrayList(FuelLog.getAllFuelLogByCompanyId(companyId));
 
             fillFuelEfficiencyChart();
 
             fillFuelExpensesChart();
         } catch (Exception e) {
-System.out.println(e.getMessage());
+
         }
     }
 

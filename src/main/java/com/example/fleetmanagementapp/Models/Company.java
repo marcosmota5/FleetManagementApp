@@ -54,6 +54,13 @@ public class Company {
         this.createdOn = createdOn;
     }
 
+    // Set the values of the current instance using a received result set
+    public void setValuesByResultSet(ResultSet rs) throws SQLException {
+        setId(rs.getInt("company_id"));
+        setCode(rs.getString("company_code"));
+        setName(rs.getString("company_name"));
+        setCreatedOn(rs.getDate("company_created_on").toLocalDate());
+    }
 
     // Get the company data using its id
     public static Company getCompanyById(int id) throws Exception {
@@ -67,7 +74,7 @@ public class Company {
         }
 
         // Create the select query by using question marks for the parameters
-        String query = "SELECT * FROM tb_companies WHERE id = ?";
+        String query = "SELECT * FROM vw_companies WHERE company_id = ?";
 
         // Use PreparedStatement to prevent SQL injection and bind parameters
         PreparedStatement pstmt = conn.prepareStatement(query);
@@ -83,11 +90,8 @@ public class Company {
             // Create a new instance of profile
             Company company = new Company();
 
-            // Set the values
-            company.setId(rs.getInt("id"));
-            company.setCode(rs.getString("code"));
-            company.setName(rs.getString("name"));
-            company.setCreatedOn(rs.getDate("created_on").toLocalDate());
+            // Call the method that set the values
+            company.setValuesByResultSet(rs);
 
             // Return the user
             return company;
@@ -112,7 +116,7 @@ public class Company {
         }
 
         // SQL query to get all users
-        String query = "SELECT * FROM tb_companies WHERE id > 0";
+        String query = "SELECT * FROM vw_companies WHERE company_id > 0";
 
         // Create a PreparedStatement
         PreparedStatement pstmt = conn.prepareStatement(query);
@@ -125,11 +129,8 @@ public class Company {
             // Create a new instance of profile
             Company company = new Company();
 
-            // Set the values
-            company.setId(rs.getInt("id"));
-            company.setCode(rs.getString("code"));
-            company.setName(rs.getString("name"));
-            company.setCreatedOn(rs.getDate("created_on").toLocalDate());
+            // Call the method that set the values
+            company.setValuesByResultSet(rs);
 
             // Add the user to the list
             companies.add(company);

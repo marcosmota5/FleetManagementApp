@@ -114,6 +114,35 @@ public class RideHistory {
         this.user = user;
     }
 
+    // Set the values of the current instance using a received result set
+    public void setValuesByResultSet(ResultSet rs) throws SQLException {
+        setId(rs.getInt("ride_history_id"));
+        setStartLocation(rs.getString("ride_history_start_location"));
+        setEndLocation(rs.getString("ride_history_end_location"));
+        setStartDate(rs.getDate("ride_history_start_date").toLocalDate());
+        setEndDate(rs.getDate("ride_history_end_date").toLocalDate());
+        setKilometersDriven(rs.getDouble("ride_history_kilometers_driven"));
+        setFuelConsumed(rs.getDouble("ride_history_fuel_consumed"));
+        setComments(rs.getString("ride_history_comments"));
+
+        // Create a new instance of vehicle
+        Vehicle vehicle = new Vehicle();
+
+        // Call the method that set the values
+        vehicle.setValuesByResultSet(rs);
+
+        // Set the vehicle
+        setVehicle(vehicle);
+
+        // Create a new instance of user
+        User user = new User();
+
+        // Call the method that set the values
+        user.setValuesByResultSet(rs);
+
+        // Set the user
+        setUser(user);
+    }
 
     // Get ongoing rides by company id
     public static List<RideHistory> getOngoingRidesByCompanyId(int companyId) throws Exception {
@@ -130,9 +159,7 @@ public class RideHistory {
         }
 
         // SQL query to get the data
-        String query = "SELECT rihi.* FROM tb_ride_history AS rihi " +
-                "INNER JOIN tb_vehicles AS vehi ON vehi.id = rihi.vehicle_id " +
-                "WHERE vehi.company_id = ? AND rihi.end_date IS NULL";
+        String query = "SELECT * FROM vw_ride_history WHERE company_id = ? AND ride_history_end_date IS NULL";
 
         // Create a PreparedStatement
         PreparedStatement pstmt = conn.prepareStatement(query);
@@ -148,21 +175,8 @@ public class RideHistory {
             // Create a new instance of profile
             RideHistory ride = new RideHistory();
 
-            // Set the values
-            ride.setId(rs.getInt("id"));
-            ride.setStartLocation(rs.getString("start_location"));
-            ride.setEndLocation(rs.getString("end_location"));
-            ride.setStartDate(rs.getDate("start_date").toLocalDate());
-            ride.setEndDate(rs.getDate("end_date").toLocalDate());
-            ride.setKilometersDriven(rs.getDouble("kilometers_driven"));
-            ride.setFuelConsumed(rs.getDouble("fuel_consumed"));
-            ride.setComments(rs.getString("comments"));
-
-            // Get the vehicle
-            ride.setVehicle(Vehicle.getVehicleById(rs.getInt("vehicle_id")));
-
-            // Get the user
-            ride.setUser(User.getUserById(rs.getInt("user_id")));
+            // Call the method that set the values
+            ride.setValuesByResultSet(rs);
 
             // Add the user to the list
             rides.add(ride);
@@ -187,9 +201,7 @@ public class RideHistory {
         }
 
         // SQL query to get the data
-        String query = "SELECT rihi.* FROM tb_ride_history AS rihi " +
-                "INNER JOIN tb_vehicles AS vehi ON vehi.id = rihi.vehicle_id " +
-                "WHERE vehi.company_id = ? AND rihi.end_date IS NOT NULL";
+        String query = "SELECT * FROM vw_ride_history WHERE company_id = ? AND ride_history_end_date IS NOT NULL";
 
         // Create a PreparedStatement
         PreparedStatement pstmt = conn.prepareStatement(query);
@@ -205,21 +217,8 @@ public class RideHistory {
             // Create a new instance of profile
             RideHistory ride = new RideHistory();
 
-            // Set the values
-            ride.setId(rs.getInt("id"));
-            ride.setStartLocation(rs.getString("start_location"));
-            ride.setEndLocation(rs.getString("end_location"));
-            ride.setStartDate(rs.getDate("start_date").toLocalDate());
-            ride.setEndDate(rs.getDate("end_date").toLocalDate());
-            ride.setKilometersDriven(rs.getDouble("kilometers_driven"));
-            ride.setFuelConsumed(rs.getDouble("fuel_consumed"));
-            ride.setComments(rs.getString("comments"));
-
-            // Get the vehicle
-            ride.setVehicle(Vehicle.getVehicleById(rs.getInt("vehicle_id")));
-
-            // Get the user
-            ride.setUser(User.getUserById(rs.getInt("user_id")));
+            // Call the method that set the values
+            ride.setValuesByResultSet(rs);
 
             // Add the user to the list
             rides.add(ride);

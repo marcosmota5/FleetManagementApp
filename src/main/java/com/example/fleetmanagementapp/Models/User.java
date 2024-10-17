@@ -111,6 +111,28 @@ public class User {
     // Get the full name
     public String getFullName() { return firstName + " " + lastName; }
 
+    // Set the values of the current instance using a received result set
+    public void setValuesByResultSet(ResultSet rs) throws SQLException {
+        setId(rs.getInt("user_id"));
+        setFirstName(rs.getString("user_first_name"));
+        setLastName(rs.getString("user_last_name"));
+        setSex(rs.getString("user_sex"));
+        setBirthDate(rs.getDate("user_birth_date").toLocalDate());
+        setPhoneNumber(rs.getString("user_phone_number"));
+        setEmail(rs.getString("user_email"));
+        setLogin(rs.getString("user_login"));
+        setCreatedOn(rs.getDate("user_created_on").toLocalDate());
+
+        // Create a new instance of profile
+        Profile profile = new Profile();
+
+        // Call the method that set the values
+        profile.setValuesByResultSet(rs);
+
+        // Set the profile
+        setProfile(profile);
+    }
+
     // Methods
 
     // Get the current user data using its id
@@ -125,7 +147,7 @@ public class User {
         }
 
         // Create the select query by using question marks for the parameters
-        String query = "SELECT * FROM tb_users WHERE id = ?";
+        String query = "SELECT * FROM vw_users WHERE user_id = ?";
 
         // Use PreparedStatement to prevent SQL injection and bind parameters
         PreparedStatement pstmt = conn.prepareStatement(query);
@@ -141,19 +163,8 @@ public class User {
             // Create a new instance of user
             User user = new User();
 
-            // Set the values
-            user.setId(rs.getInt("id"));
-            user.setFirstName(rs.getString("first_name"));
-            user.setLastName(rs.getString("last_name"));
-            user.setSex(rs.getString("sex"));
-            user.setBirthDate(rs.getDate("birth_date").toLocalDate());
-            user.setPhoneNumber(rs.getString("phone_number"));
-            user.setEmail(rs.getString("email"));
-            user.setLogin(rs.getString("login"));
-            user.setCreatedOn(rs.getDate("created_on").toLocalDate());
-
-            // Get the profile
-            user.setProfile(Profile.getProfileById(rs.getInt("profile_id")));
+            // Call the method that set the values
+            user.setValuesByResultSet(rs);
 
             // Return the user
             return user;

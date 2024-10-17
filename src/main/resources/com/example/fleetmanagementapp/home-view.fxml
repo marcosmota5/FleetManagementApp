@@ -100,12 +100,12 @@
                   </Label>
                   <TableView fx:id="tvwOngoingRides" prefHeight="678.0" prefWidth="640.0">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="Start date" />
-                      <TableColumn prefWidth="94.0" text="Start location" />
-                        <TableColumn prefWidth="85.0" text="Brand" />
-                        <TableColumn prefWidth="75.0" text="Model" />
-                        <TableColumn prefWidth="75.0" text="License plate" />
-                        <TableColumn prefWidth="75.0" text="User" />
+                      <TableColumn prefWidth="111.0" text="Start date" />
+                      <TableColumn prefWidth="106.0" text="Start location" />
+                        <TableColumn prefWidth="115.0" text="Brand" />
+                        <TableColumn prefWidth="105.0" text="Model" />
+                        <TableColumn minWidth="2.0" prefWidth="106.0" text="License plate" />
+                        <TableColumn minWidth="9.0" prefWidth="96.0" text="User" />
                     </columns>
                   </TableView>
                </children>
@@ -120,7 +120,7 @@
          </items>
       </ToolBar>
       <Label fx:id="lblCurrentCompany" layoutX="1021.0" layoutY="5.0" prefHeight="17.0" prefWidth="102.0" text="Current company:" />
-      <Button fx:id="btnLogout" layoutX="1197.0" layoutY="741.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="82.0" text="Logout">
+      <Button fx:id="btnLogout" layoutX="1197.0" layoutY="739.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="82.0" text="Logout">
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>

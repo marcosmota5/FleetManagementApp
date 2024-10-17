@@ -131,6 +131,30 @@ public class Vehicle {
 
     private void setCompany(Company company) { this.company = company; }
 
+    // Set the values of the current instance using a received result set
+    public void setValuesByResultSet(ResultSet rs) throws SQLException {
+        setId(rs.getInt("vehicle_id"));
+        setLicensePlate(rs.getString("vehicle_license_plate"));
+        setType(rs.getString("vehicle_type"));
+        setBrand(rs.getString("vehicle_brand"));
+        setModel(rs.getString("vehicle_model"));
+        setYear(rs.getInt("vehicle_year"));
+        setFuelType(rs.getString("vehicle_fuel_type"));
+        setMileage(rs.getDouble("vehicle_mileage"));
+        setFuelLevel(rs.getDouble("vehicle_fuel_level"));
+        setStatus(rs.getString("vehicle_status"));
+        setCreatedOn(rs.getDate("vehicle_created_on").toLocalDate());
+
+        // Create a new instance of company
+        Company company = new Company();
+
+        // Call the method that set the values
+        company.setValuesByResultSet(rs);
+
+        // Set the company
+        setCompany(company);
+    }
+
     // Get the profile data using its id
     public static Vehicle getVehicleById(int id) throws Exception {
 
@@ -143,7 +167,7 @@ public class Vehicle {
         }
 
         // Create the select query by using question marks for the parameters
-        String query = "SELECT * FROM tb_vehicles WHERE id = ?";
+        String query = "SELECT * FROM vw_vehicles WHERE vehicle_id = ?";
 
         // Use PreparedStatement to prevent SQL injection and bind parameters
         PreparedStatement pstmt = conn.prepareStatement(query);
@@ -159,21 +183,8 @@ public class Vehicle {
             // Create a new instance of profile
             Vehicle vehicle = new Vehicle();
 
-            // Set the values
-            vehicle.setId(rs.getInt("id"));
-            vehicle.setLicensePlate(rs.getString("license_plate"));
-            vehicle.setType(rs.getString("type"));
-            vehicle.setBrand(rs.getString("brand"));
-            vehicle.setModel(rs.getString("model"));
-            vehicle.setYear(rs.getInt("year"));
-            vehicle.setFuelType(rs.getString("fuel_type"));
-            vehicle.setMileage(rs.getDouble("mileage"));
-            vehicle.setFuelLevel(rs.getDouble("fuel_level"));
-            vehicle.setStatus(rs.getString("status"));
-            vehicle.setCreatedOn(rs.getDate("created_on").toLocalDate());
-
-            // Get the company
-            vehicle.setCompany(Company.getCompanyById(rs.getInt("company_id")));
+            // Call the method that set the values
+            vehicle.setValuesByResultSet(rs);
 
             // Return the user
             return vehicle;
