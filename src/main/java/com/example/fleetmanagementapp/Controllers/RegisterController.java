@@ -1,8 +1,8 @@
 package com.example.fleetmanagementapp.Controllers;
 
-import com.example.fleetmanagementapp.Helpers.AppPreferences;
-import com.example.fleetmanagementapp.Helpers.PasswordHelper;
+import com.example.fleetmanagementapp.Helpers.PasswordUtils;
 import com.example.fleetmanagementapp.Helpers.SceneSwitcher;
+import com.example.fleetmanagementapp.Helpers.StringUtils;
 import com.example.fleetmanagementapp.Models.Company;
 import com.example.fleetmanagementapp.Models.Profile;
 import com.example.fleetmanagementapp.Models.User;
@@ -21,7 +21,6 @@ import net.synedra.validatorfx.Validator;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
 
 public class RegisterController {
 
@@ -139,13 +138,44 @@ public class RegisterController {
     @FXML
     private TextField txtPhoneNumber;
 
+    @FXML
+    private MenuItem mniAddExistingCompany;
+
+    @FXML
+    private MenuItem mniAddNewCompany;
+
+    @FXML
+    private Button btnDeleteCompany;
+
+    @FXML
+    private Button btnEditCompany;
+
     // Validator class
     private Validator validator = new Validator();
 
     private ObservableList<Profile> profileList;
+    private ObservableList<Company> companyList;
 
     @FXML
     public void initialize() {
+
+        // Add a listener to the textProperty() to detect text changes
+        txtFirstName.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                txtLogin.setText(StringUtils.getFirstAndLastName(newValue + " " + txtLastName.getText(),
+                        ".").toLowerCase());
+            }
+        });
+
+        // Add a listener to the textProperty() to detect text changes
+        txtLastName.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                txtLogin.setText(StringUtils.getFirstAndLastName(txtFirstName.getText() + " " + newValue,
+                        ".").toLowerCase());
+            }
+        });
 
         // Add a listener to the textProperty() to detect text changes
         pswPassword.textProperty().addListener(new ChangeListener<String>() {
@@ -226,7 +256,7 @@ public class RegisterController {
                 .decorates(rbnSexMale)
                 .immediate();
 
-        // Create a check for the validator to validate the birth date property
+        // Create a check for the validator to validate the birthdate property
         validator.createCheck()
                 .dependsOn("birthDate", dtpBirthDate.valueProperty())
                 .withMethod(c -> {
@@ -312,8 +342,8 @@ public class RegisterController {
                         c.error("The password field must have less than 64 characters");
                     }
 
-                    if (!PasswordHelper.isStrong(password)) {
-                        c.error("The password is not strong enough. It must have at least: \n\n8 characters\nOne number\nOne uppercase letters\nOne lowercase letters\nOne special character");
+                    if (!PasswordUtils.isStrong(password)) {
+                        c.error("The password is not strong enough. It must have at least:\n8 characters\nOne number\nOne uppercase letters\nOne lowercase letters\nOne special character");
                     }
                 })
                 .decorates(pswPassword)
@@ -333,8 +363,8 @@ public class RegisterController {
                         c.error("The password field must have less than 64 characters");
                     }
 
-                    if (!PasswordHelper.isStrong(password)) {
-                        c.error("The password is not strong enough. It must have at least: \n\n8 characters\nOne number\nOne uppercase letters\nOne lowercase letters\nOne special character");
+                    if (!PasswordUtils.isStrong(password)) {
+                        c.error("The password is not strong enough. It must have at least:\n8 characters\nOne number\nOne uppercase letters\nOne lowercase letters\nOne special character");
                     }
                 })
                 .decorates(txtPasswordVisible)
@@ -389,12 +419,11 @@ public class RegisterController {
                 .decorates(cmbProfile)
                 .immediate();
 
-
         // Create a check for the validator to validate the password property
         TooltipWrapper<Button> signUpWrapper = new TooltipWrapper<>(
                 btnRegister,
                 validator.containsErrorsProperty(),
-                Bindings.concat("Cannot perform login:\n", validator.createStringBinding())
+                Bindings.concat("Cannot register user:\n", validator.createStringBinding())
         );
 
         // Add the tooltip
@@ -427,7 +456,6 @@ public class RegisterController {
         btnShowPassword.setVisible(true);
         btnHidePassword.setVisible(false);
     }
-
 
     // Method to show the password
     public void showConfirmPassword(ActionEvent event)  {
@@ -462,7 +490,7 @@ public class RegisterController {
         // Try to get the execute the login and set the user
         try {
             userId = User.registerUser(txtFirstName.getText(), txtLastName.getText(),
-                    tgpSex.getSelectedToggle().equals("Male") ? "M" : "F", dtpBirthDate.getValue(),
+                    ((RadioButton)tgpSex.getSelectedToggle()).getText().equals("Male") ? "M" : "F", dtpBirthDate.getValue(),
                     txtPhoneNumber.getText(), txtEmail.getText(), txtLogin.getText(), pswPassword.getText(),
                     cmbProfile.getValue().getId());
         } catch (Exception e) {

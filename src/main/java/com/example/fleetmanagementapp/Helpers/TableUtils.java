@@ -10,7 +10,7 @@ import javafx.scene.control.TableView;
 
 import java.time.LocalDate;
 
-public class TableHelper {
+public class TableUtils {
 
     public static void fillOngoingRidesTable(ObservableList<RideHistory> ongoingRideList,
                                              TableView<RideHistory> tvwOngoingRides,

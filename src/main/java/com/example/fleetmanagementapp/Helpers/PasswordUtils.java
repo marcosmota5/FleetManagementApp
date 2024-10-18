@@ -2,7 +2,7 @@ package com.example.fleetmanagementapp.Helpers;
 
 import java.util.regex.Pattern;
 
-public class PasswordHelper {
+public class PasswordUtils {
 
     public static boolean isStrong(String password) {
         if (password == null || password.isEmpty()) {

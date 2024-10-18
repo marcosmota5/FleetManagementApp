@@ -3,6 +3,7 @@ package com.example.fleetmanagementapp.Controllers;
 import com.example.fleetmanagementapp.Helpers.SceneSwitcher;
 import com.example.fleetmanagementapp.Helpers.AppPreferences;
 import com.example.fleetmanagementapp.Models.User;
+import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -52,11 +53,32 @@ public class LoginController {
     @FXML
     private Label lblErrorMessage;
 
+    @FXML
+    private RadioButton rbnThemeDark;
+
+    @FXML
+    private RadioButton rbnThemeLight;
+
+    @FXML
+    private ToggleGroup tgpTheme;
+
     // Validator class
     private Validator validator = new Validator();
 
     @FXML
     public void initialize() {
+
+        // Load the saved login from preferences and display it
+        String[] preferences = AppPreferences.loadPreferences();
+        txtLoginOrEmail.setText(preferences[0]);
+        chbRememberMe.setSelected(Boolean.parseBoolean(preferences[1]));
+        if (preferences[2].equals("Light")) {
+            tgpTheme.selectToggle(rbnThemeLight);
+
+        } else {
+            tgpTheme.selectToggle(rbnThemeDark);
+        }
+        changeTheme(preferences[2]);
 
         // Add a listener to the textProperty() to detect text changes
         pswPassword.textProperty().addListener(new ChangeListener<String>() {
@@ -74,10 +96,14 @@ public class LoginController {
             }
         });
 
-        // Load the saved login from preferences and display it
-        String[] preferences = AppPreferences.loadPreferences();
-        txtLoginOrEmail.setText(preferences[0]);
-        chbRememberMe.setSelected(Boolean.parseBoolean(preferences[1]));
+        // Add a listener to the ToggleGroup to detect changes
+        tgpTheme.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) { // Check if a toggle is selected
+                RadioButton selectedRadioButton = (RadioButton) newValue;
+                String selectedValue = selectedRadioButton.getText();
+                changeTheme(selectedValue);
+            }
+        });
 
         // Create a check for the validator to validate the login or email property
         validator.createCheck()
@@ -144,6 +170,14 @@ public class LoginController {
         hbxLoginButton.getChildren().add(signUpWrapper);
     }
 
+    private void changeTheme(String theme){
+        if (theme.equals("Light")) {
+            Application.setUserAgentStylesheet(getClass().getResource("/primer-light.css").toExternalForm());
+        } else {
+            Application.setUserAgentStylesheet(getClass().getResource("/primer-dark.css").toExternalForm());
+        }
+    }
+
     // Method to show the password
     public void showPassword(ActionEvent event)  {
         pswPassword.setVisible(false);
@@ -187,7 +221,8 @@ public class LoginController {
 
             // If the remember me checkbox is selected, save the preference, otherwise clear the preferences
             if (chbRememberMe.isSelected()) {
-                AppPreferences.savePreferences(txtLoginOrEmail.getText(), true);
+                AppPreferences.savePreferences(txtLoginOrEmail.getText(), true,
+                        ((RadioButton)tgpTheme.getSelectedToggle()).getText());
             } else {
                 AppPreferences.clearPreferences();
             }

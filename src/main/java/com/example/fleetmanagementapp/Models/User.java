@@ -5,6 +5,7 @@ import com.example.fleetmanagementapp.Data.DbConnection;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 public class User {
 
@@ -19,6 +20,7 @@ public class User {
     private String login;
     private LocalDate createdOn;
     private Profile profile;
+    List<Company> companies;
 
     // Getter and setter for id
     public int getId() {
@@ -106,6 +108,15 @@ public class User {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    // Getter and Setter for companies
+    public List<Company> getCompanies() {
+        return companies;
+    }
+
+    public void setCompanies(List<Company> companies) {
+        this.companies = companies;
     }
 
     // Get the full name
@@ -213,7 +224,7 @@ public class User {
         }
     }
 
-    // Execute the login and return a user instance
+    // Register a new user and return its id
     public static int registerUser(String firstName, String lastName, String sex, LocalDate birthDate, String phoneNumber,
                                    String email, String login, String password, int profileId) throws Exception {
 

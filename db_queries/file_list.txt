@@ -2,6 +2,7 @@
 "\tables\tb_profiles.sql"
 "\tables\tb_users.sql"
 "\tables\tb_companies.sql"
+"\tables\tb_user_companies.sql"
 "\tables\tb_vehicles.sql"
 "\tables\tb_ride_history.sql"
 "\tables\tb_fuel_log.sql"

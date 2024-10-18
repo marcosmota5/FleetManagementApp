@@ -16,7 +16,7 @@ import javafx.scene.layout.StackPane;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class ChartHelper {
+public class ChartUtils {
 
     // List of colors for bars
     private static final List<String> colors = Arrays.asList(
@@ -59,7 +59,6 @@ public class ChartHelper {
 
         // Series for the bar chart
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Fuel Efficiency (Km/L)");
 
         int colorIndex = 0;
 
@@ -110,6 +109,9 @@ public class ChartHelper {
         // Add series to the bar chart
         chart.getData().clear();
         chart.getData().add(series);
+
+        // Hide the legend
+        chart.setLegendVisible(false);
     }
 
 
@@ -121,7 +123,6 @@ public class ChartHelper {
 
         // Series for the line chart
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Fuel Expenses Over Time");
 
         // Create a map to accumulate fuel expenses by month
         Map<String, Double> expensesByMonth = new HashMap<>();
@@ -179,5 +180,8 @@ public class ChartHelper {
         // Add series to the line chart
         chart.getData().clear();
         chart.getData().add(series);
+
+        // Hide the legend
+        chart.setLegendVisible(false);
     }
 }

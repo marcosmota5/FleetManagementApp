@@ -2,10 +2,7 @@ package com.example.fleetmanagementapp.Models;
 
 import com.example.fleetmanagementapp.Data.DbConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,6 +95,48 @@ public class Profile {
     }
 
     // Get all profiles
+    public static List<Profile> getLowerPriorityProfiles(int priority) throws Exception {
+
+        // Create the profiles list
+        List<Profile> profiles = new ArrayList<>();
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // SQL query to get profiles
+        String query = "SELECT * FROM vw_profiles WHERE profile_priority > ?";
+
+        // Create a PreparedStatement
+        PreparedStatement pstmt = conn.prepareStatement(query);
+
+        // Set the parameters
+        pstmt.setInt(1, priority);
+
+        // Execute the query
+        ResultSet rs = pstmt.executeQuery();
+
+        // Iterate through the result set and create profile objects
+        while (rs.next()) {
+            // Create a new instance of profile
+            Profile profile = new Profile();
+
+            // Call the method that set the values
+            profile.setValuesByResultSet(rs);
+
+            // Add the user to the list
+            profiles.add(profile);
+        }
+
+        // Return the list of users
+        return profiles;
+    }
+
+    // Get all profiles
     public static List<Profile> getAllProfiles() throws Exception {
 
         // Create the profiles list
@@ -134,6 +173,116 @@ public class Profile {
 
         // Return the list of users
         return profiles;
+    }
+
+    // Get all current priorities
+    public static List<Integer> getPrioritiesByPriorityAndCondition(int priority, boolean isForNewItem) throws Exception {
+
+        // Create the profiles list
+        List<Integer> priorities = new ArrayList<>();
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // SQL query to get the priorities
+        String query = "(" +
+                "SELECT profile_priority " +
+                "FROM vw_profiles " +
+                "WHERE profile_priority " + (isForNewItem ? ">" : ">=") + " ? " +
+                "ORDER BY profile_priority ASC" +
+                ")" +
+                "UNION ALL" +
+                "(" +
+                "SELECT IFNULL(" +
+                "(SELECT MAX(profile_priority) + 1 " +
+                "FROM vw_profiles " +
+                "WHERE profile_priority " + (isForNewItem ? ">" : ">=") + " ? )," +
+                "(SELECT MAX(profile_priority) + 1 " +
+                "FROM vw_profiles)" +
+                ") AS profile_priority" +
+                ")" +
+                "ORDER BY profile_priority ASC";
+
+        // Create a PreparedStatement
+        PreparedStatement pstmt = conn.prepareStatement(query);
+
+        // Set the parameters
+        pstmt.setInt(1, priority);
+        pstmt.setInt(2, priority);
+
+        // Execute the query
+        ResultSet rs = pstmt.executeQuery();
+
+        // Iterate through the result set and create priority objects
+        while (rs.next()) {
+            // Add the user to the list
+            priorities.add(rs.getInt("profile_priority"));
+        }
+
+        // Return the list of priorities
+        return priorities;
+    }
+
+    // Save the profile in the database, if the profile id is 0, insert a new one, if it's not, update an existing one
+    public static int saveProfile(int profileId, String name, int priority, String description) throws Exception {
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // Create the select query by using question marks for the parameters
+        String query = "{ CALL sp_upsert_profile(?, ?, ?, ?, ?) }";
+
+        // Use PreparedStatement to prevent SQL injection and bind parameters
+        CallableStatement cstmt = conn.prepareCall(query);
+
+        // Bind parameters to the stored procedure
+        cstmt.setInt(1, profileId);
+        cstmt.setString(2, name);
+        cstmt.setString(3, description);
+        cstmt.setInt(4, priority);
+
+        // Register the OUT parameter (user ID)
+        cstmt.registerOutParameter(5, java.sql.Types.INTEGER);
+
+        // Execute the query
+        ResultSet rs = cstmt.executeQuery();
+
+        // Retrieve and return the user ID from the OUT parameter
+        return cstmt.getInt(5);
+    }
+
+    // Delete the profile in the database
+    public static void deleteProfile(int profileId) throws Exception {
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // Create the select query by using question marks for the parameters
+        String query = "{ CALL sp_delete_profile(?) }";
+
+        // Use PreparedStatement to prevent SQL injection and bind parameters
+        CallableStatement cstmt = conn.prepareCall(query);
+
+        // Bind parameters to the stored procedure
+        cstmt.setInt(1, profileId);
+
+        // Execute the query
+        ResultSet rs = cstmt.executeQuery();
     }
 
     @Override

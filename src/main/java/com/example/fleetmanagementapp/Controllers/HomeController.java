@@ -1,30 +1,23 @@
 package com.example.fleetmanagementapp.Controllers;
 
-import com.example.fleetmanagementapp.Helpers.ChartHelper;
+import com.example.fleetmanagementapp.HelloApplication;
+import com.example.fleetmanagementapp.Helpers.ChartUtils;
 import com.example.fleetmanagementapp.Helpers.SceneSwitcher;
-import com.example.fleetmanagementapp.Helpers.TableHelper;
+import com.example.fleetmanagementapp.Helpers.StageUtils;
+import com.example.fleetmanagementapp.Helpers.TableUtils;
 import com.example.fleetmanagementapp.Models.*;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 public class HomeController {
 
@@ -182,6 +175,12 @@ public class HomeController {
             };
         });
 
+        // Check if the ComboBox has items before setting the selection
+        if (!cmbCompanies.getItems().isEmpty()) {
+            // Set the first item of the ComboBox as the selected item
+            cmbCompanies.getSelectionModel().select(0);
+        }
+
     }
 
     private void updateCompanySpecificLists(int companyId){
@@ -195,11 +194,11 @@ public class HomeController {
             fuelLogList = FXCollections.observableArrayList(FuelLog.getAllFuelLogByCompanyId(companyId));
 
             // Call the helper method to fill charts
-            ChartHelper.fillFuelEfficiencyChart(rideHistoryList, bctFuelEfficiencyByVehicle, caxFuelEfficiencyCategory);
-            ChartHelper.fillFuelExpensesChart(fuelLogList, lctFuelExpensesOverTime, caxFuelExpensesCategory);
+            ChartUtils.fillFuelEfficiencyChart(rideHistoryList, bctFuelEfficiencyByVehicle, caxFuelEfficiencyCategory);
+            ChartUtils.fillFuelExpensesChart(fuelLogList, lctFuelExpensesOverTime, caxFuelExpensesCategory);
 
             // Call the helper method to fill the table
-            TableHelper.fillOngoingRidesTable(ongoingRideList, tvwOngoingRides, tbcStartDate, tbcStartLocation,
+            TableUtils.fillOngoingRidesTable(ongoingRideList, tvwOngoingRides, tbcStartDate, tbcStartLocation,
                     tbcBrand, tbcModel, tbcLicensePlate, tbcUser);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -214,6 +213,77 @@ public class HomeController {
         // Set the user labels
         lblUsername.setText(user.toString());
         lblProfile.setText(user.getProfile().toString());
+    }
+
+    public void addNewProfile(ActionEvent event) throws IOException {
+        try {
+
+            Profile newProfile = new Profile();
+
+            // Open the Profile Detail window and pass the profile data to the controller
+            StageUtils.openModalWindow(
+                    "profile-detail-view.fxml",
+                    HelloApplication.getPrimaryStage(),    // The owner stage (main window)
+                    "Add New Profile",                        // The window title
+                    (ProfileDetailController controller) -> {  // Lambda expression for the controller
+                        controller.setTargetProfile(currentUser, newProfile);
+                    }
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void listProfiles(ActionEvent event) throws IOException {
+        try {
+            // Open the profile list
+            StageUtils.openModalWindow(
+                    "profile-list-view.fxml",
+                    HelloApplication.getPrimaryStage(),    // The owner stage (main window)
+                    "View Profiles",                        // The window title
+                    (ProfileListController controller) -> {  // Lambda expression for the controller
+                        controller.setValues(currentUser);
+                    }
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addNewVehicle(ActionEvent event) throws IOException {
+        try {
+
+            Vehicle newVehicle = new Vehicle();
+            newVehicle.setCompany(cmbCompanies.getSelectionModel().getSelectedItem());
+
+            // Open the Profile Detail window and pass the vehicle data to the controller
+            StageUtils.openModalWindow(
+                    "vehicle-detail-view.fxml",
+                    HelloApplication.getPrimaryStage(),    // The owner stage (main window)
+                    "Add New Vehicle",                        // The window title
+                    (VehicleDetailController controller) -> {  // Lambda expression for the controller
+                        controller.setTargetVehicle(currentUser, newVehicle);
+                    }
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void listVehicles(ActionEvent event) throws IOException {
+        try {
+            // Open the profile list
+            StageUtils.openModalWindow(
+                    "vehicle-list-view.fxml",
+                    HelloApplication.getPrimaryStage(),    // The owner stage (main window)
+                    "View Vehicles",                        // The window title
+                    (VehicleListController controller) -> {  // Lambda expression for the controller
+                        controller.setValues(currentUser, cmbCompanies.getSelectionModel().getSelectedItem());
+                    }
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void logout(ActionEvent event) throws IOException {
@@ -247,6 +317,9 @@ public class HomeController {
 
     }
 
+    public void refresh(ActionEvent event) {
+        updateCompanySpecificLists(cmbCompanies.getSelectionModel().getSelectedItem().getId());
+    }
 
     public void about(ActionEvent event) {
         // Create the alert

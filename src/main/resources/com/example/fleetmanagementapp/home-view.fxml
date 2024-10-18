@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anpHome" prefHeight="768.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.HomeController">
+<AnchorPane fx:id="anpHome" prefHeight="768.0" prefWidth="1280.0" stylesheets="@../../../primer-light.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.HomeController">
    <children>
       <MenuBar fx:id="mbrMenu" layoutY="2.0" prefHeight="26.0" prefWidth="1280.0">
         <menus>
@@ -33,16 +33,22 @@
                   <MenuItem fx:id="mniViewUsers" mnemonicParsing="false" text="View users" />
                   <Menu fx:id="mnuProfiles" mnemonicParsing="false" text="Profiles">
                     <items>
-                      <MenuItem fx:id="mniAddNewProfile" mnemonicParsing="false" text="Add new profile" />
-                        <MenuItem fx:id="mniViewProfiles" mnemonicParsing="false" text="View profiles" />
+                      <MenuItem fx:id="mniAddNewProfile" mnemonicParsing="false" onAction="#addNewProfile" text="Add new profile" />
+                        <MenuItem fx:id="mniViewProfiles" mnemonicParsing="false" onAction="#listProfiles" text="View profiles" />
                     </items>
                   </Menu>
             </items>
           </Menu>
+            <Menu fx:id="mnuCompanies" mnemonicParsing="false" text="Companies">
+               <items>
+                  <MenuItem fx:id="mniAddNewCompany" mnemonicParsing="false" text="Add new company" />
+                  <MenuItem fx:id="mniViewCompanies" mnemonicParsing="false" text="View companies" />
+               </items>
+            </Menu>
             <Menu fx:id="mnuVehicles" mnemonicParsing="false" text="Vehicles">
                <items>
-                  <MenuItem fx:id="mniAddNewVehicle" mnemonicParsing="false" text="Add new vehicle" />
-                  <MenuItem fx:id="mniViewVehicles" mnemonicParsing="false" text="View vehicles" />
+                  <MenuItem fx:id="mniAddNewVehicle" mnemonicParsing="false" onAction="#addNewVehicle" text="Add new vehicle" />
+                  <MenuItem fx:id="mniViewVehicles" mnemonicParsing="false" onAction="#listVehicles" text="View vehicles" />
                </items>
             </Menu>
           <Menu fx:id="mnuRides" mnemonicParsing="false" text="Rides">
@@ -64,8 +70,8 @@
           </Menu>
         </menus>
       </MenuBar>
-      <ComboBox fx:id="cmbCompanies" layoutX="1128.0" layoutY="1.0" prefWidth="150.0" />
-      <GridPane fx:id="grdMain" layoutY="28.0" prefHeight="704.0" prefWidth="1280.0">
+      <ComboBox fx:id="cmbCompanies" layoutX="1015.0" layoutY="3.0" prefWidth="150.0" />
+      <GridPane fx:id="grdMain" layoutY="42.0" prefHeight="690.0" prefWidth="1280.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -75,7 +81,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <BarChart fx:id="bctFuelEfficiencyByVehicle" title="Fuel Efficiency by Vehicle">
+            <BarChart fx:id="bctFuelEfficiencyByVehicle" title="Fuel Efficiency by Vehicle (Km/L)">
               <xAxis>
                 <CategoryAxis fx:id="caxFuelEfficiencyCategory" side="BOTTOM" />
               </xAxis>
@@ -83,7 +89,7 @@
                 <NumberAxis fx:id="naxFuelEfficiencyNumber" side="LEFT" />
               </yAxis>
             </BarChart>
-            <LineChart fx:id="lctFuelExpensesOverTime" title="Fuel Expenses Over Time" GridPane.rowIndex="1">
+            <LineChart fx:id="lctFuelExpensesOverTime" title="Fuel Expenses Over Time ($)" GridPane.rowIndex="1">
               <xAxis>
                 <CategoryAxis fx:id="caxFuelExpensesCategory" side="BOTTOM" />
               </xAxis>
@@ -100,11 +106,11 @@
                   </Label>
                   <TableView fx:id="tvwOngoingRides" prefHeight="678.0" prefWidth="640.0">
                     <columns>
-                      <TableColumn fx:id="tbcStartDate" prefWidth="111.0" text="Start date" />
-                      <TableColumn fx:id="tbcStartLocation" prefWidth="106.0" text="Start location" />
+                      <TableColumn fx:id="tbcStartDate" prefWidth="100.0" text="Start date" />
+                      <TableColumn fx:id="tbcStartLocation" prefWidth="117.0" text="Start location" />
                         <TableColumn fx:id="tbcBrand" prefWidth="115.0" text="Brand" />
-                        <TableColumn fx:id="tbcModel" prefWidth="105.0" text="Model" />
-                        <TableColumn fx:id="tbcLicensePlate" minWidth="2.0" prefWidth="106.0" text="License plate" />
+                        <TableColumn fx:id="tbcModel" prefWidth="99.0" text="Model" />
+                        <TableColumn fx:id="tbcLicensePlate" minWidth="2.0" prefWidth="112.0" text="License plate" />
                         <TableColumn fx:id="tbcUser" minWidth="9.0" prefWidth="96.0" text="User" />
                     </columns>
                   </TableView>
@@ -112,15 +118,24 @@
             </VBox>
          </children>
       </GridPane>
-      <ToolBar fx:id="tbrToolBar" layoutY="740.0" prefHeight="28.0" prefWidth="1280.0">
+      <ToolBar fx:id="tbrToolBar" layoutY="735.0" prefHeight="38.0" prefWidth="1280.0">
          <items>
             <Label fx:id="lblUsername" text="Username (Login)" />
             <Separator fx:id="sprSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="2.0" />
             <Label fx:id="lblProfile" text="Profile" />
          </items>
       </ToolBar>
-      <Label fx:id="lblCurrentCompany" layoutX="1021.0" layoutY="5.0" prefHeight="17.0" prefWidth="102.0" text="Current company:" />
-      <Button fx:id="btnLogout" layoutX="1197.0" layoutY="739.0" mnemonicParsing="false" onAction="#logout" prefHeight="26.0" prefWidth="82.0" text="Logout">
+      <Label fx:id="lblCurrentCompany" layoutX="895.0" layoutY="11.0" prefHeight="20.0" prefWidth="117.0" text="Current company:" />
+      <Button fx:id="btnLogout" layoutX="1169.0" layoutY="734.0" mnemonicParsing="false" onAction="#logout" prefHeight="36.0" prefWidth="109.0" text="Logout">
+         <graphic>
+            <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../logout.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="btnRefresh" layoutX="1168.0" layoutY="3.0" mnemonicParsing="false" onAction="#refresh" prefHeight="36.0" prefWidth="109.0" text="Refresh">
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
