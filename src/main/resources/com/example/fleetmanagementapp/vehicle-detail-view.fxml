@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="anpVehicleDetal" prefHeight="420.0" prefWidth="600.0" stylesheets="@../../../primer-light.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.VehicleDetailController">
+   <children>
+      <Label fx:id="lblType" layoutX="24.0" layoutY="76.0" text="Type" />
+      <Label fx:id="lblTitle" layoutX="24.0" layoutY="42.0" text="Vehicle detail">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblBrand" layoutX="202.0" layoutY="76.0" text="Brand" />
+      <TextField fx:id="txtBrand" layoutX="202.0" layoutY="96.0" prefHeight="36.0" prefWidth="185.0" />
+      <ComboBox fx:id="cmbType" layoutX="24.0" layoutY="96.0" prefHeight="36.0" prefWidth="166.0" />
+      <Label fx:id="lblModel" layoutX="397.0" layoutY="76.0" text="Model" />
+      <TextField fx:id="txtModel" layoutX="397.0" layoutY="96.0" prefHeight="36.0" prefWidth="185.0" />
+      <Label fx:id="lblLicensePlate" layoutX="24.0" layoutY="142.0" text="License plate" />
+      <TextField fx:id="txtLicensePlate" layoutX="24.0" layoutY="162.0" prefHeight="36.0" prefWidth="166.0" />
+      <Label fx:id="lblYear" layoutX="202.0" layoutY="142.0" text="Year" />
+      <Label fx:id="lblFuelType" layoutX="397.0" layoutY="142.0" text="Fuel type" />
+      <ComboBox fx:id="cmbFueltType" layoutX="397.0" layoutY="162.0" prefHeight="36.0" prefWidth="185.0" />
+      <Label fx:id="lblMileage" layoutX="24.0" layoutY="214.0" text="Mileage" />
+      <Label fx:id="lblFuelLevel" layoutX="202.0" layoutY="214.0" text="Fuel level" />
+      <Label fx:id="lblStatus" layoutX="397.0" layoutY="214.0" text="Status" />
+      <ComboBox fx:id="cmbStatus" layoutX="397.0" layoutY="234.0" prefHeight="36.0" prefWidth="185.0" />
+      <HBox fx:id="hbxSaveButton" layoutX="148.0" layoutY="290.0" prefHeight="37.0" prefWidth="147.0">
+         <children>
+            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#save" prefHeight="37.0" prefWidth="147.0" text="Save">
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../save.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+      <Button fx:id="btnCancel" layoutX="306.0" layoutY="290.0" mnemonicParsing="false" onAction="#cancel" prefHeight="37.0" prefWidth="147.0" text="Cancel">
+         <graphic>
+            <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../cancel.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Label fx:id="lblErrorMessage" alignment="TOP_LEFT" layoutX="21.0" layoutY="342.0" prefHeight="61.0" prefWidth="559.0" style="-fx-background-color: #FFE5D6;" text="Text" textFill="#d54057" visible="false" wrapText="true" />
+      <ComboBox fx:id="cmbYear" layoutX="202.0" layoutY="162.0" prefHeight="36.0" prefWidth="185.0" />
+      <TextField fx:id="txtMileage" layoutX="24.0" layoutY="234.0" prefHeight="36.0" prefWidth="166.0" />
+      <TextField fx:id="txtFuelLevel" layoutX="202.0" layoutY="234.0" prefHeight="36.0" prefWidth="185.0" />
+   </children>
+</AnchorPane>
