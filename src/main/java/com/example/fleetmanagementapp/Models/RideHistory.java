@@ -338,7 +338,7 @@ public class RideHistory {
         }
 
         // Create the select query by using question marks for the parameters
-        String query = "{ CALL sp_delete_ride(?) }";
+        String query = "{ CALL sp_delete_ride_history(?) }";
 
         // Use PreparedStatement to prevent SQL injection and bind parameters
         CallableStatement cstmt = conn.prepareCall(query);
