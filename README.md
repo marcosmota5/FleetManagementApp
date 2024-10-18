@@ -1,19 +1,58 @@
 # FleetManagementApp
 
-This is a repository of a JavaFX for an assignment and only for learning purposes.
+This is a repository of a JavaFX application created for an assignment, intended for learning purposes.
 
-Assignment detail: COMP1011 Assignment 1
-Created on: 2024-10-16
+**Assignment Detail:** COMP1011 Assignment 1  
+**Created on:** 2024-10-16
 
-# Student Information:
+## Student Information
 
-Id: 200564426
-Name: Marcos Oliveira Mota
+- **ID:** 200564426  
+- **Name:** Marcos Oliveira Mota
 
-# Description
+## Description
 
-This is an app for a company to manage their fleet of vehicle, that means managing the rides their employees take and also the fuel consumed.
+FleetManagementApp is designed to help companies manage their vehicle fleets, which includes tracking employee rides and fuel consumption. The dashboard provides an overview of the company's fleet performance.
 
-The main page is a useful dashboard in which the user can see how the company fleet is performing.
+### Setup Instructions
+To run the application:
+1. Execute the `main_script.sql` file in your MySQL instance to set up the necessary database, tables, and procedures.
+2. Ensure the `DbConnection` configuration matches your MySQL instance's details.
 
-In order to run the application, please first run the main_script.sql command in your MySQL instance to create the necessary database, tables, procedures, and etc. Remember to also check the DbConnection to make sure the connection details are correct with your instance.
+Note: Some features are still under development and have been disabled in the menu.
+
+## Screenshots
+
+### Login  
+![Login](./screenshots/login.png)
+
+### Login in dark theme and showing validation  
+![Login in dark theme and showing validation](./screenshots/login_dark_theme_and_validation.png)
+
+### Register user page  
+![Register user page](./screenshots/register_user.png)
+
+### Home page  
+![Home page](./screenshots/home_page.png)
+
+### Items management  
+![Items management](./screenshots/items_management.png)
+
+### Adding or editing item  
+![Adding or editing item](./screenshots/add_new_item.png)
+
+## Technologies Used
+
+- **Java** - Main language
+- **JavaFX** - Library for creating desktop apps
+- **ValidationFX** - Library for field validation
+- **AtlantaFX** - Library for applying modern light/dark themes
+- **MySQL** - Database
+
+## Contact
+
+Check my <a href="https://github.com/marcosmota5" title="Profile">profile</a> for contact information.
+
+## Other
+
+A big thanks to <a href="https://www.flaticon.com/" title="Flaticon">Flaticon</a> for providing for free so many amazing images. Every single icon in this project comes from Flaticon, so all icon rights are reserved to it.

@@ -1,8 +1,8 @@
--- DROP DATABASE IF EXISTS db_fleet_management;
+DROP DATABASE IF EXISTS db_fleet_management;
 
--- CREATE DATABASE db_fleet_management;
+CREATE DATABASE db_fleet_management;
 
--- USE db_fleet_management;
+USE db_fleet_management;
 
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 ; 
  
@@ -38,6 +38,15 @@ CREATE TABLE tb_companies
     code VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL UNIQUE,
     created_on DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+); 
+ 
+CREATE TABLE tb_user_companies
+(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	user_id INT NOT NULL, 
+	company_id INT NOT NULL,
+	CONSTRAINT fk_tb_user_companies_tb_users FOREIGN KEY (user_id) REFERENCES tb_users (id) ON DELETE CASCADE, 
+	CONSTRAINT fk_tb_user_companies_tb_companies FOREIGN KEY (company_id) REFERENCES tb_companies (id) ON DELETE CASCADE
 ); 
  
 CREATE TABLE tb_vehicles
@@ -86,6 +95,93 @@ CREATE TABLE tb_fuel_log
     CONSTRAINT fk_tb_fuel_log_tb_vehicles FOREIGN KEY (vehicle_id) REFERENCES tb_vehicles (id) ON DELETE CASCADE,
     CONSTRAINT fk_tb_fuel_log_tb_users FOREIGN KEY (user_id) REFERENCES tb_users (id) ON DELETE CASCADE
 ); 
+ 
+CREATE VIEW vw_profiles
+AS
+SELECT 
+    prof.id AS 'profile_id',
+    prof.name AS 'profile_name',
+    prof.description AS 'profile_description',
+    prof.priority AS 'profile_priority',
+    prof.created_on AS 'profile_created_on'
+FROM tb_profiles AS prof; 
+ 
+CREATE VIEW vw_users
+AS
+SELECT 
+    us.id AS 'user_id',
+    us.first_name AS 'user_first_name',
+    us.last_name AS 'user_last_name',
+    us.sex AS 'user_sex',
+    us.birth_date AS 'user_birth_date',
+    us.phone_number AS 'user_phone_number',
+    us.email AS 'user_email',
+    us.login AS 'user_login',
+    us.password_hash AS 'user_password_hash',
+    us.salt AS 'user_salt',
+    us.created_on AS 'user_created_on',
+    prof.*
+FROM tb_users AS us
+INNER JOIN vw_profiles AS prof ON prof.profile_id = us.profile_id; 
+ 
+CREATE VIEW vw_companies
+AS
+SELECT 
+    comp.id AS 'company_id',
+    comp.code AS 'company_code',
+    comp.name AS 'company_name',
+    comp.created_on AS 'company_created_on'
+FROM tb_companies AS comp; 
+ 
+CREATE VIEW vw_vehicles
+AS
+SELECT 
+    vehi.id AS 'vehicle_id',
+    vehi.license_plate AS 'vehicle_license_plate',
+    vehi.type AS 'vehicle_type',
+    vehi.brand AS 'vehicle_brand',
+    vehi.model AS 'vehicle_model',
+    vehi.year AS 'vehicle_year',
+    vehi.fuel_type AS 'vehicle_fuel_type',
+    vehi.mileage AS 'vehicle_mileage',
+    vehi.fuel_level AS 'vehicle_fuel_level',
+    vehi.status AS 'vehicle_status',
+    vehi.created_on AS 'vehicle_created_on',
+    comp.*
+FROM tb_vehicles AS vehi
+INNER JOIN vw_companies AS comp ON comp.company_id = vehi.company_id; 
+ 
+CREATE VIEW vw_ride_history
+AS
+SELECT 
+    rihi.id AS 'ride_history_id',
+    rihi.start_location AS 'ride_history_start_location',
+    rihi.end_location AS 'ride_history_end_location',
+    rihi.start_date AS 'ride_history_start_date',
+    rihi.end_date AS 'ride_history_end_date',
+    rihi.kilometers_driven AS 'ride_history_kilometers_driven',
+    rihi.fuel_consumed AS 'ride_history_fuel_consumed',
+    rihi.comments AS 'ride_history_comments',
+    vehi.*,
+    us.*
+FROM tb_ride_history AS rihi
+INNER JOIN vw_vehicles AS vehi ON vehi.vehicle_id = rihi.vehicle_id
+INNER JOIN vw_users AS us ON us.user_id = rihi.user_id; 
+ 
+CREATE VIEW vw_fuel_log
+AS
+SELECT 
+    fulo.id AS 'fuel_log_id',
+    fulo.fuel_date AS 'fuel_log_fuel_date',
+    fulo.liters_filled AS 'fuel_log_liters_filled',
+    fulo.fuel_price_per_liter AS 'fuel_log_fuel_price_per_liter',
+    fulo.total_cost AS 'fuel_log_total_cost',
+    fulo.comments AS 'fuel_log_comments',
+    vehi.*,
+    us.*
+FROM tb_fuel_log AS fulo
+INNER JOIN vw_vehicles AS vehi ON vehi.vehicle_id = fulo.vehicle_id
+INNER JOIN vw_users AS us ON us.user_id = fulo.user_id; 
  
 DELIMITER $$
 
@@ -728,8 +824,7 @@ BEGIN
             end_date,
             kilometers_driven,
             fuel_consumed,
-            comments,
-            created_on
+            comments
         ) 
         VALUES 
         (
@@ -741,8 +836,7 @@ BEGIN
             p_end_date,
             p_kilometers_driven,
             p_fuel_consumed,
-            p_comments,
-            current_datetime
+            p_comments
         );
 
         -- Set the result id
@@ -1073,7 +1167,22 @@ VALUES
 (10, 2, 'Sault Ste. Marie', 'Thunder Bay', '2024-09-15 05:30:00', '2024-09-15 11:30:00', 400.00, 18.5, 'Long-distance delivery.'),
 (2, 1, 'Toronto', 'Ottawa', '2024-10-14 07:00:00', '2024-10-14 12:30:00', 450.00, 20.0, 'Comfortable ride with Tesla.');
 
--- Inser tsome dummy fuel log
+-- Ongoing rides with NULL end_location and end_date
+INSERT INTO tb_ride_history 
+(vehicle_id, user_id, start_location, start_date)
+VALUES
+(1, 1, 'Toronto', '2024-10-15 08:00:00'),
+(2, 2, 'Mississauga', '2024-10-15 09:00:00'),
+(3, 1, 'Ottawa', '2024-10-14 15:00:00'),
+(4, 2, 'Waterloo', '2024-10-15 10:00:00'),
+(5, 1, 'Hamilton', '2024-10-14 14:00:00'),
+(6, 1, 'Toronto', '2024-10-15 07:30:00'),
+(7, 2, 'Kingston', '2024-10-15 11:00:00'),
+(8, 1, 'Guelph', '2024-10-14 12:00:00'),
+(9, 2, 'Niagara Falls', '2024-10-15 06:00:00'),
+(10, 1, 'Thunder Bay', '2024-10-15 09:30:00');
+
+-- Insert some dummy fuel log
 INSERT INTO tb_fuel_log 
 (vehicle_id, user_id, fuel_date, liters_filled, fuel_price_per_liter, total_cost, comments)
 VALUES
