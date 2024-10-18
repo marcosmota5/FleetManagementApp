@@ -30,6 +30,15 @@ public class StringUtils {
         if (str == null || str.isEmpty()) {
             return false;
         }
+
         return str.matches("-?\\d+(\\.\\d+)?");
+    }
+
+    public static boolean isNumericOrEmpty(String str) {
+        if (str == null || str.isEmpty()) {
+            return true;
+        }
+
+        return isNumeric(str);
     }
 }

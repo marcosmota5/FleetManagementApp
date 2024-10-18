@@ -4,6 +4,7 @@ import com.example.fleetmanagementapp.Data.DbConnection;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -183,6 +184,45 @@ public class User {
 
         // Return null as the user was not found
         return null;
+    }
+
+    // Get all profiles
+    public static List<User> getAllUsers() throws Exception {
+
+        // Create the users list
+        List<User> users = new ArrayList<>();
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // SQL query to get all users
+        String query = "SELECT * FROM vw_users WHERE user_id > 0";
+
+        // Create a PreparedStatement
+        PreparedStatement pstmt = conn.prepareStatement(query);
+
+        // Execute the query
+        ResultSet rs = pstmt.executeQuery();
+
+        // Iterate through the result set and create profile objects
+        while (rs.next()) {
+            // Create a new instance of profile
+            User user = new User();
+
+            // Call the method that set the values
+            user.setValuesByResultSet(rs);
+
+            // Add the user to the list
+            users.add(user);
+        }
+
+        // Return the list of users
+        return users;
     }
 
     // Execute the login and return a user instance

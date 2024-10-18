@@ -2,10 +2,7 @@ package com.example.fleetmanagementapp.Models;
 
 import com.example.fleetmanagementapp.Data.DbConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +67,7 @@ public class RideHistory {
     }
 
     // Getter and Setter for kilometers driven
-    public double getKilometersDriven() {
+    public Double getKilometersDriven() {
         return kilometersDriven;
     }
 
@@ -79,7 +76,7 @@ public class RideHistory {
     }
 
     // Getter and Setter for fuel consumed
-    public double getFuelConsumed() {
+    public Double getFuelConsumed() {
         return fuelConsumed;
     }
 
@@ -226,6 +223,131 @@ public class RideHistory {
 
         // Return the list of users
         return rides;
+    }
+
+    // Get ongoing rides by company id
+    public static List<RideHistory> getAllRidesById(int companyId) throws Exception {
+
+        // Create the profiles list
+        List<RideHistory> rides = new ArrayList<>();
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // SQL query to get the data
+        String query = "SELECT * FROM vw_ride_history WHERE company_id = ?";
+
+        // Create a PreparedStatement
+        PreparedStatement pstmt = conn.prepareStatement(query);
+
+        // Set the parameters
+        pstmt.setInt(1, companyId);
+
+        // Execute the query
+        ResultSet rs = pstmt.executeQuery();
+
+        // Iterate through the result set and create profile objects
+        while (rs.next()) {
+            // Create a new instance of profile
+            RideHistory ride = new RideHistory();
+
+            // Call the method that set the values
+            ride.setValuesByResultSet(rs);
+
+            // Add the user to the list
+            rides.add(ride);
+        }
+
+        // Return the list of users
+        return rides;
+    }
+
+    // Save the profile in the database, if the ride id is 0, insert a new one, if it's not, update an existing one
+    public static int saveRide(int rideId, String startLocation, String endLocation, LocalDate startDate, LocalDate endDate,
+                               Double kilometersDriven, Double fuelConsumed, String comments, int vehicleId, int userId)
+            throws Exception {
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // Create the select query by using question marks for the parameters
+        String query = "{ CALL sp_upsert_ride_history(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+
+        // Use PreparedStatement to prevent SQL injection and bind parameters
+        CallableStatement cstmt = conn.prepareCall(query);
+
+        // Convert LocalDate to java.sql.Date
+        java.sql.Date sqlStartDate = java.sql.Date.valueOf(startDate);
+
+        // Handle nullable fields (convert null if needed)
+        java.sql.Date sqlEndDate = (endDate != null) ? java.sql.Date.valueOf(endDate) : null;
+        String safeEndLocation = (endLocation != null && !endLocation.isEmpty()) ? endLocation : null;
+        Double safeKilometersDriven = (kilometersDriven != null) ? kilometersDriven : null;
+        Double safeFuelConsumed = (fuelConsumed != null) ? fuelConsumed : null;
+        String safeComments = (comments != null && !comments.isEmpty()) ? comments : null;
+
+        // Bind parameters to the stored procedure
+        cstmt.setInt(1, rideId);
+        cstmt.setInt(2, vehicleId);
+        cstmt.setInt(3, userId);
+        cstmt.setString(4, startLocation);
+        cstmt.setString(5, safeEndLocation);
+        cstmt.setDate(6, sqlStartDate);
+        cstmt.setDate(7, sqlEndDate);
+        if (safeKilometersDriven != null) {
+            cstmt.setDouble(8, safeKilometersDriven);
+        } else {
+            cstmt.setNull(8, java.sql.Types.DOUBLE); // Set to NULL if it's empty
+        }
+        if (safeFuelConsumed != null) {
+            cstmt.setDouble(9, safeFuelConsumed);
+        } else {
+            cstmt.setNull(9, java.sql.Types.DOUBLE); // Set to NULL if it's empty
+        }
+        cstmt.setString(10, safeComments);
+
+        // Register the OUT parameter (user ID)
+        cstmt.registerOutParameter(11, java.sql.Types.INTEGER);
+
+        // Execute the query
+        ResultSet rs = cstmt.executeQuery();
+
+        // Retrieve and return the user ID from the OUT parameter
+        return cstmt.getInt(11);
+    }
+
+    // Delete the ride in the database
+    public static void deleteRide(int rideId) throws Exception {
+
+        // Create the connection
+        Connection conn = DbConnection.connectToDatabase();
+
+        // If the connection is null, throw an exception
+        if (conn == null) {
+            throw new SQLException("Failed to connect to the database.");
+        }
+
+        // Create the select query by using question marks for the parameters
+        String query = "{ CALL sp_delete_ride(?) }";
+
+        // Use PreparedStatement to prevent SQL injection and bind parameters
+        CallableStatement cstmt = conn.prepareCall(query);
+
+        // Bind parameters to the stored procedure
+        cstmt.setInt(1, rideId);
+
+        // Execute the query
+        ResultSet rs = cstmt.executeQuery();
     }
 
 }

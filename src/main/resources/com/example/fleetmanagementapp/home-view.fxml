@@ -29,8 +29,8 @@
         <menus>
           <Menu fx:id="mnuUsers" mnemonicParsing="false" text="Users">
             <items>
-              <MenuItem fx:id="mniAddNewUser" mnemonicParsing="false" text="Add new user" />
-                  <MenuItem fx:id="mniViewUsers" mnemonicParsing="false" text="View users" />
+              <MenuItem fx:id="mniAddNewUser" disable="true" mnemonicParsing="false" text="Add new user" />
+                  <MenuItem fx:id="mniViewUsers" disable="true" mnemonicParsing="false" text="View users" />
                   <Menu fx:id="mnuProfiles" mnemonicParsing="false" text="Profiles">
                     <items>
                       <MenuItem fx:id="mniAddNewProfile" mnemonicParsing="false" onAction="#addNewProfile" text="Add new profile" />
@@ -41,8 +41,8 @@
           </Menu>
             <Menu fx:id="mnuCompanies" mnemonicParsing="false" text="Companies">
                <items>
-                  <MenuItem fx:id="mniAddNewCompany" mnemonicParsing="false" text="Add new company" />
-                  <MenuItem fx:id="mniViewCompanies" mnemonicParsing="false" text="View companies" />
+                  <MenuItem fx:id="mniAddNewCompany" disable="true" mnemonicParsing="false" text="Add new company" />
+                  <MenuItem fx:id="mniViewCompanies" disable="true" mnemonicParsing="false" text="View companies" />
                </items>
             </Menu>
             <Menu fx:id="mnuVehicles" mnemonicParsing="false" text="Vehicles">
@@ -53,14 +53,14 @@
             </Menu>
           <Menu fx:id="mnuRides" mnemonicParsing="false" text="Rides">
             <items>
-              <MenuItem fx:id="mniAddNewRide" mnemonicParsing="false" text="Add new ride" />
-                  <MenuItem fx:id="mniViewRides" mnemonicParsing="false" text="View rides" />
+              <MenuItem fx:id="mniAddNewRide" mnemonicParsing="false" onAction="#addNewRide" text="Add new ride" />
+                  <MenuItem fx:id="mniViewRides" mnemonicParsing="false" onAction="#listRides" text="View rides" />
             </items>
           </Menu>
             <Menu fx:id="mnuFuel" mnemonicParsing="false" text="Fuel">
               <items>
-                <MenuItem fx:id="mniAddNewFuelOccurrence" mnemonicParsing="false" text="Add new fuel occurrence" />
-                  <MenuItem fx:id="mniViewFuelLog" mnemonicParsing="false" text="View fuel log" />
+                <MenuItem fx:id="mniAddNewFuelOccurrence" disable="true" mnemonicParsing="false" text="Add new fuel occurrence" />
+                  <MenuItem fx:id="mniViewFuelLog" disable="true" mnemonicParsing="false" text="View fuel log" />
               </items>
             </Menu>
           <Menu fx:id="mniHelp" mnemonicParsing="false" text="Help">
@@ -114,6 +114,7 @@
                         <TableColumn fx:id="tbcUser" minWidth="9.0" prefWidth="96.0" text="User" />
                     </columns>
                   </TableView>
+                  <Label alignment="CENTER_RIGHT" text="*Double click to edit" />
                </children>
             </VBox>
          </children>
@@ -139,7 +140,7 @@
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../logout.png" />
+                  <Image url="@../../../refresh.png" />
                </image>
             </ImageView>
          </graphic>

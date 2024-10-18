@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="anpVehicleDetal" prefHeight="420.0" prefWidth="600.0" stylesheets="@../../../primer-light.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.VehicleDetailController">
    <children>
       <Label fx:id="lblType" layoutX="24.0" layoutY="76.0" text="Type" />
@@ -40,7 +39,7 @@
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../register.png" />
+                        <Image url="@../../../save.png" />
                      </image>
                   </ImageView>
                </graphic>

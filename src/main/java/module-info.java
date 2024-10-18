@@ -7,6 +7,7 @@ module com.example.fleetmanagementapp {
     requires net.synedra.validatorfx;
     requires org.kordamp.bootstrapfx.core;
     requires java.sql;
+    requires java.desktop;
     requires java.prefs;
 
     opens com.example.fleetmanagementapp to javafx.fxml;

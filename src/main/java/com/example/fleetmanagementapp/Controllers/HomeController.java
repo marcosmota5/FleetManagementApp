@@ -181,6 +181,37 @@ public class HomeController {
             cmbCompanies.getSelectionModel().select(0);
         }
 
+        tvwOngoingRides.setRowFactory(tv -> {
+            TableRow<RideHistory> row = new TableRow<>();
+
+            // Set the event handler for mouse click
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    // Get the selected item (the RideHistory for the clicked row)
+                    RideHistory selectedRide = row.getItem();
+
+                    // Call your method with the selected item
+                    try {
+                        // Open the Profile Detail window and pass the vehicle data to the controller
+                        StageUtils.openModalWindow(
+                                "ride-detail-view.fxml",
+                                HelloApplication.getPrimaryStage(),    // The owner stage (main window)
+                                "Edit Ride",                        // The window title
+                                (RideDetailController controller) -> {  // Lambda expression for the controller
+                                    controller.setTargetRide(currentUser, cmbCompanies.getSelectionModel().getSelectedItem(), selectedRide);
+                                }
+                        );
+
+                        // Refresh the charts and tables
+                        updateCompanySpecificLists(cmbCompanies.getSelectionModel().getSelectedItem().getId());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            return row;
+        });
     }
 
     private void updateCompanySpecificLists(int companyId){
@@ -278,6 +309,44 @@ public class HomeController {
                     HelloApplication.getPrimaryStage(),    // The owner stage (main window)
                     "View Vehicles",                        // The window title
                     (VehicleListController controller) -> {  // Lambda expression for the controller
+                        controller.setValues(currentUser, cmbCompanies.getSelectionModel().getSelectedItem());
+                    }
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addNewRide(ActionEvent event) throws IOException {
+        try {
+
+            RideHistory newRide = new RideHistory();
+
+            // Open the Profile Detail window and pass the vehicle data to the controller
+            StageUtils.openModalWindow(
+                    "ride-detail-view.fxml",
+                    HelloApplication.getPrimaryStage(),    // The owner stage (main window)
+                    "Add New Ride",                        // The window title
+                    (RideDetailController controller) -> {  // Lambda expression for the controller
+                        controller.setTargetRide(currentUser, cmbCompanies.getSelectionModel().getSelectedItem(), newRide);
+                    }
+            );
+
+            // Refresh the charts and tables
+            updateCompanySpecificLists(cmbCompanies.getSelectionModel().getSelectedItem().getId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void listRides(ActionEvent event) throws IOException {
+        try {
+            // Open the profile list
+            StageUtils.openModalWindow(
+                    "ride-list-view.fxml",
+                    HelloApplication.getPrimaryStage(),    // The owner stage (main window)
+                    "View Rides",                        // The window title
+                    (RideListController controller) -> {  // Lambda expression for the controller
                         controller.setValues(currentUser, cmbCompanies.getSelectionModel().getSelectedItem());
                     }
             );

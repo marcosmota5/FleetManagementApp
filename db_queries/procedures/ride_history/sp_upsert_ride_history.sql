@@ -40,8 +40,7 @@ BEGIN
             end_date,
             kilometers_driven,
             fuel_consumed,
-            comments,
-            created_on
+            comments
         ) 
         VALUES 
         (
@@ -53,8 +52,7 @@ BEGIN
             p_end_date,
             p_kilometers_driven,
             p_fuel_consumed,
-            p_comments,
-            current_datetime
+            p_comments
         );
 
         -- Set the result id

@@ -116,7 +116,7 @@ public class ChartUtils {
 
 
     public static void fillFuelExpensesChart(ObservableList<FuelLog> list, LineChart<String, Number> chart,
-                                      CategoryAxis category) {
+                                             CategoryAxis category) {
 
         // Create a set to store unique months
         Set<String> months = new HashSet<>();

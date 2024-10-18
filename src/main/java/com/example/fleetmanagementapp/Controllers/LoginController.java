@@ -10,13 +10,20 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import net.synedra.validatorfx.TooltipWrapper;
 import net.synedra.validatorfx.Validator;
+import javafx.scene.control.Hyperlink;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class LoginController {
 
@@ -62,6 +69,9 @@ public class LoginController {
     @FXML
     private ToggleGroup tgpTheme;
 
+    @FXML
+    private Hyperlink hlkGitHubRepository;
+
     // Validator class
     private Validator validator = new Validator();
 
@@ -72,11 +82,10 @@ public class LoginController {
         String[] preferences = AppPreferences.loadPreferences();
         txtLoginOrEmail.setText(preferences[0]);
         chbRememberMe.setSelected(Boolean.parseBoolean(preferences[1]));
-        if (preferences[2].equals("Light")) {
-            tgpTheme.selectToggle(rbnThemeLight);
-
-        } else {
+        if (preferences[2].equals("Dark")) {
             tgpTheme.selectToggle(rbnThemeDark);
+        } else {
+            tgpTheme.selectToggle(rbnThemeLight);
         }
         changeTheme(preferences[2]);
 
@@ -171,10 +180,10 @@ public class LoginController {
     }
 
     private void changeTheme(String theme){
-        if (theme.equals("Light")) {
-            Application.setUserAgentStylesheet(getClass().getResource("/primer-light.css").toExternalForm());
-        } else {
+        if (theme.equals("Dark")) {
             Application.setUserAgentStylesheet(getClass().getResource("/primer-dark.css").toExternalForm());
+        } else {
+            Application.setUserAgentStylesheet(getClass().getResource("/primer-light.css").toExternalForm());
         }
     }
 
@@ -242,5 +251,15 @@ public class LoginController {
     public void registerUser(ActionEvent event) throws IOException {
         // Switch the scene
         SceneSwitcher.switchScene(anpLogin, "register-view.fxml");
+    }
+
+    public void openGitHubRepository(ActionEvent event) throws IOException {
+        try {
+            Desktop.getDesktop().browse(new URL("https://github.com/marcosmota5/FleetManagementApp").toURI());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 }

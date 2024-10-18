@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="anpProfileDetail" prefHeight="340.0" prefWidth="600.0" stylesheets="@../../../primer-light.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.ProfileDetailController">
    <children>
       <Label fx:id="lblTitle" layoutX="14.0" layoutY="32.0" text="Profile detail">
@@ -31,7 +30,7 @@
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../register.png" />
+                        <Image url="@../../../save.png" />
                      </image>
                   </ImageView>
                </graphic>

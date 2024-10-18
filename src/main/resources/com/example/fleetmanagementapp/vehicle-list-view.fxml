@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="anpVehicleList" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../primer-light.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fleetmanagementapp.Controllers.VehicleListController">
    <children>
       <Label fx:id="lblTitle" layoutX="34.0" layoutY="55.0" text="Vehicles">
@@ -21,7 +20,7 @@
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../cancel.png" />
+                  <Image url="@../../../add.png" />
                </image>
             </ImageView>
          </graphic>
@@ -30,7 +29,7 @@
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../cancel.png" />
+                  <Image url="@../../../edit.png" />
                </image>
             </ImageView>
          </graphic>
@@ -39,7 +38,7 @@
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../cancel.png" />
+                  <Image url="@../../../delete.png" />
                </image>
             </ImageView>
          </graphic>
